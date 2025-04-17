@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods_clients/business_logic/cubits/get_supplier_data/get_supplier_data_cubit.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_app_bar.dart';
-import 'package:goods_clients/presentation/screens/navigator_bar_screens/contact/widgets/chat_textfield.dart';
+import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/widgets/chat_textfield.dart';
 import 'package:intl/intl.dart';
 import 'package:goods_clients/business_logic/cubits/get_client_data/get_client_data_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/get_client_data/get_client_data_state.dart';

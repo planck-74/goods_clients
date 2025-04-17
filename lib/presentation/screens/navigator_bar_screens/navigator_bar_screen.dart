@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/cart/cart_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/products.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/profile_screen.dart';
-import 'contact/contact_screen.dart';
 import 'orders/orders_screen.dart';
 
 class NavigatorBar extends StatefulWidget {
@@ -21,7 +19,6 @@ class NavigatorBarState extends State<NavigatorBar> {
     const Products(),
     const Orders(),
     const Cart(),
-    const ContactScreen(),
     const Profile(),
   ];
 
@@ -67,13 +64,6 @@ class NavigatorBarState extends State<NavigatorBar> {
                 AssetImage('assets/icons/cart.png'),
               ),
               label: 'العربة',
-            ),
-            BottomNavigationBarItem(
-              icon: ImageIcon(
-                size: 34,
-                AssetImage('assets/icons/telephone.png'),
-              ),
-              label: 'تـواصل',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(

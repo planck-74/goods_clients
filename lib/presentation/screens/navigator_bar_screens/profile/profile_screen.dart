@@ -5,7 +5,12 @@ import 'package:goods_clients/business_logic/cubits/get_client_data/get_client_d
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/data/models/client_model.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_app_bar.dart';
+import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/button.dart';
+import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/open_social_media.dart';
+import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/show_call_dialog.dart';
 import 'package:goods_clients/services/auth_service.dart';
+
+import 'dynamic_image_container.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -240,7 +245,7 @@ class _ProfileState extends State<Profile> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                _buildButton(
+                                buildButton(
                                   context,
                                   Colors.blueGrey,
                                   'تعديل بيانات الحساب',
@@ -248,14 +253,29 @@ class _ProfileState extends State<Profile> {
                                       context, '/EditProfile'),
                                 ),
                                 Container(height: 0.5, color: Colors.grey),
-                                _buildButton(
+                                buildButton(
                                   context,
                                   Colors.yellow,
                                   'الإشعارات',
                                   () => showNotificationsDialog(context),
                                 ),
                                 Container(height: 0.5, color: Colors.grey),
-                                _buildButton(
+                                buildButton(
+                                  context,
+                                  Colors.blue,
+                                  'إتصل بنا',
+                                  () => showCallDialog(context),
+                                ),
+                                Container(height: 0.5, color: Colors.grey),
+                                buildButton(
+                                  context,
+                                  Colors.purple,
+                                  'راسلنا',
+                                  () => Navigator.pushNamed(
+                                      context, '/ChatScreen'),
+                                ),
+                                Container(height: 0.5, color: Colors.grey),
+                                buildButton(
                                   context,
                                   Colors.red,
                                   'تسجيل الخروج',
@@ -276,148 +296,56 @@ class _ProfileState extends State<Profile> {
                 );
               },
             ),
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      buildSocialIcon(
+                        'assets/icons/facebook.png',
+                        () => openSocialMedia(context, 'facebook'),
+                      ),
+                      buildSocialIcon(
+                        'assets/icons/instagram.png',
+                        () => openSocialMedia(context, 'instagram'),
+                      ),
+                      buildSocialIcon(
+                        'assets/icons/whatsapp.png',
+                        () => openSocialMedia(context, 'whatsapp'),
+                      ),
+                      buildSocialIcon(
+                        'assets/icons/telegram.png',
+                        () => openSocialMedia(context, 'telegram'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildButton(
-      BuildContext context, Color color, String text, VoidCallback onTap) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  gradient: LinearGradient(
-                    colors: [color, color.withOpacity(0.7)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.blueGrey,
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-                size: 16,
-              ),
-            ],
-          ),
-        ),
-      ),
+  void showNotificationsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          backgroundColor: whiteColor,
+          content: Text('ياتي قريباً،إنتظر خدمة إشعارات مميزة'),
+        );
+      },
     );
   }
-}
-
-class DynamicImageContainer extends StatefulWidget {
-  final String imageUrl;
-  const DynamicImageContainer({super.key, required this.imageUrl});
-
-  @override
-  _DynamicImageContainerState createState() => _DynamicImageContainerState();
-}
-
-class _DynamicImageContainerState extends State<DynamicImageContainer> {
-  double? _aspectRatio;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchImageAspectRatio();
-  }
-
-  void _fetchImageAspectRatio() {
-    final image = Image.network(widget.imageUrl);
-    final ImageStream stream = image.image.resolve(const ImageConfiguration());
-    stream.addListener(
-      ImageStreamListener(
-        (ImageInfo info, bool synchronousCall) {
-          if (mounted) {
-            setState(() {
-              _aspectRatio = info.image.width / info.image.height;
-            });
-          }
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_aspectRatio == null) {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-          ),
-          gradient: LinearGradient(
-            colors: [
-              const Color.fromARGB(255, 50, 50, 50).withOpacity(0.7),
-              const Color.fromARGB(255, 30, 30, 30).withOpacity(0.4),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        height: 200,
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: _aspectRatio!,
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(widget.imageUrl),
-          ),
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(12),
-            bottomLeft: Radius.circular(12),
-          ),
-          gradient: LinearGradient(
-            colors: [
-              const Color.fromARGB(255, 50, 50, 50).withOpacity(0.7),
-              const Color.fromARGB(255, 30, 30, 30).withOpacity(0.4),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void showNotificationsDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return const AlertDialog(
-        backgroundColor: whiteColor,
-        content: Text('ياتي قريباً،إنتظر خدمة إشعارات مميزة'),
-      );
-    },
-  );
 }

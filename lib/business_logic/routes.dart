@@ -4,9 +4,9 @@ import 'package:goods_clients/presentation/screens/auth_screens/auth_custom_widg
 import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/get_client_details.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/otp_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/cart/cart_screen.dart';
-import 'package:goods_clients/presentation/screens/navigator_bar_screens/contact/chat_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/main_market/main_market.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/navigator_bar_screen.dart';
+import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/chat_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/edit_profile_screen.dart';
 import '../presentation/screens/auth_screens/sign_pages/sign.dart';
 
