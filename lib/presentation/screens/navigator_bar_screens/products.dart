@@ -18,11 +18,11 @@ class Products extends StatefulWidget {
 }
 
 class _ProductsState extends State<Products> {
-  var fbm = FirebaseMessaging.instance;
+  // var fbm = FirebaseMessaging.instance;
 
   @override
   void initState() {
-    fbm.getToken().then((token) {});
+    // fbm.getToken().then((token) {});
     context.read<AvailableCubit>().fetchCombinedProducts();
     super.initState();
   }

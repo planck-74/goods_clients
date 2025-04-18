@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 
 class ChatTextfield extends StatefulWidget {
@@ -16,14 +16,13 @@ class ChatTextfield extends StatefulWidget {
 
 class _ChatTextfieldState extends State<ChatTextfield> {
   final TextEditingController messageController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
   String? _selectedFilePath;
 
   @override
   void initState() {
     super.initState();
-    messageController.addListener(() {
-      setState(() {});
-    });
+    messageController.addListener(() => setState(() {}));
   }
 
   @override
@@ -32,80 +31,65 @@ class _ChatTextfieldState extends State<ChatTextfield> {
     super.dispose();
   }
 
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+  // دالة اختيار الصورة بدون طلب صلاحيات
+  Future<void> _pickImage() async {
+    final XFile? file = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 80,
     );
-    if (result != null) {
-      setState(() {
-        _selectedFilePath = result.files.single.path;
-      });
-      print("File selected: $_selectedFilePath");
+    if (file != null) {
+      setState(() => _selectedFilePath = file.path);
+      print("🖼️ Image selected: $_selectedFilePath");
     }
   }
 
   void _removeFile() {
-    setState(() {
-      _selectedFilePath = null;
-    });
+    setState(() => _selectedFilePath = null);
   }
 
   Future<void> sendMessage() async {
-    print("Start sendMessage");
-
     if (messageController.text.isEmpty && _selectedFilePath == null) return;
 
     final senderId = FirebaseAuth.instance.currentUser?.uid;
     final timestamp = FieldValue.serverTimestamp();
-    final chatDocRef = FirebaseFirestore.instance
-        .collection('chats')
-        .doc(FirebaseAuth.instance.currentUser?.uid);
+    final chatDocRef =
+        FirebaseFirestore.instance.collection('chats').doc(senderId);
 
     String? lastMessageToUpdate;
 
-    // إرسال الرسالة النصية
+    // إرسال النص
     if (messageController.text.isNotEmpty) {
-      print("Sending text message");
-
       await chatDocRef.collection('messages').add({
         'sender': senderId,
         'text': messageController.text,
         'timestamp': timestamp,
       });
-
       lastMessageToUpdate = messageController.text;
     }
 
-    // إرسال ملف صورة
+    // إرسال الصورة
     if (_selectedFilePath != null) {
-      String localFilePath = _selectedFilePath!;
-      setState(() {
-        _selectedFilePath = null;
-      });
+      final localPath = _selectedFilePath!;
+      setState(() => _selectedFilePath = null);
 
-      print("Uploading file");
-
-      DocumentReference messageRef =
-          await chatDocRef.collection('messages').add({
+      final msgRef = await chatDocRef.collection('messages').add({
         'sender': senderId,
-        'file': localFilePath,
+        'file': localPath,
         'uploading': true,
         'timestamp': timestamp,
       });
 
-      File file = File(localFilePath);
-      final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      Reference storageReference = FirebaseStorage.instance
-          .ref('chat_images')
-          .child(FirebaseAuth.instance.currentUser?.uid ?? '')
-          .child(fileName);
-      UploadTask uploadTask = storageReference.putFile(file);
-      TaskSnapshot taskSnapshot = await uploadTask;
+      final file = File(localPath);
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final storageRef =
+          FirebaseStorage.instance.ref('chat_images/$senderId/$fileName');
+      final uploadTask = storageRef.putFile(file);
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
 
-      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-      print("File uploaded. Download URL: $downloadUrl");
-
-      await messageRef.update({
+      await msgRef.update({
         'file': downloadUrl,
         'uploading': false,
       });
@@ -113,12 +97,11 @@ class _ChatTextfieldState extends State<ChatTextfield> {
       lastMessageToUpdate = '[Image]';
     }
 
-    // تحديث مستند المحادثة الرئيسي
+    // تحديث آخر رسالة بالمستند الرئيسي
     if (lastMessageToUpdate != null) {
       await chatDocRef.set({
-        'clientId': FirebaseAuth
-            .instance.currentUser?.uid, // تأكد إن chatId يمثل العميل
-        'supplierId': supplierId, // عرّف supplierId في الكلاس أو مرره للصفحة
+        'clientId': senderId,
+        'supplierId': supplierId, // عرِّف supplierId أو مرّره
         'lastMessage': lastMessageToUpdate,
         'lastMessageTime': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
@@ -130,7 +113,7 @@ class _ChatTextfieldState extends State<ChatTextfield> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 2, 8, 8),
+      padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -176,7 +159,7 @@ class _ChatTextfieldState extends State<ChatTextfield> {
                       const BoxConstraints(minHeight: 40, maxHeight: 150),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: const Color.fromARGB(255, 255, 255, 255),
+                    color: Colors.white,
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black26,
@@ -186,16 +169,10 @@ class _ChatTextfieldState extends State<ChatTextfield> {
                     ],
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const SizedBox(width: 2),
                       IconButton(
-                        style: ButtonStyle(
-                          side: WidgetStateProperty.all(
-                              const BorderSide(width: 0.5)),
-                        ),
-                        icon: const Icon(Icons.attach_file),
-                        onPressed: _pickFile,
+                        icon: const Icon(Icons.image),
+                        onPressed: _pickImage,
                       ),
                       Expanded(
                         child: TextField(
@@ -208,10 +185,6 @@ class _ChatTextfieldState extends State<ChatTextfield> {
                           ),
                           maxLines: 5,
                           minLines: 1,
-                          keyboardType: TextInputType.multiline,
-                          onChanged: (value) {
-                            setState(() {});
-                          },
                         ),
                       ),
                     ],
@@ -219,27 +192,14 @@ class _ChatTextfieldState extends State<ChatTextfield> {
                 ),
               ),
               const SizedBox(width: 6),
-              Container(
-                decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                  color: Color.fromARGB(255, 253, 254, 255),
-                  borderRadius: BorderRadius.all(Radius.circular(50)),
-                ),
-                child: IconButton(
-                  iconSize: 36,
-                  icon: const Icon(Icons.send),
-                  color: (messageController.text.isEmpty &&
-                          _selectedFilePath == null)
-                      ? Colors.blueGrey
-                      : Colors.red,
-                  onPressed: sendMessage,
-                ),
+              IconButton(
+                iconSize: 36,
+                icon: const Icon(Icons.send),
+                color: (messageController.text.isEmpty &&
+                        _selectedFilePath == null)
+                    ? Colors.blueGrey
+                    : Colors.red,
+                onPressed: sendMessage,
               ),
             ],
           ),

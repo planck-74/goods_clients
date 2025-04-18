@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -5,6 +8,13 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+ 
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 android {
     namespace = "com.example.goods_clients"
     compileSdkVersion flutter.compileSdkVersion
@@ -20,22 +30,35 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.goods_clients"
+        applicationId "com.planck.goodsclient"
         minSdk = 23
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.2"
     }
+signingConfigs {
+    create("release") {
+        keyAlias = keystoreProperties["keyAlias"]
+        keyPassword = keystoreProperties["keyPassword"]
+        def storeFilePath = keystoreProperties["storeFile"]
+        if (storeFilePath != null) {
+            storeFile = file(storeFilePath)
+        }
+        storePassword = keystoreProperties["storePassword"]
+    }
+}
 
     buildTypes {
         release {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     
-
+  
 }
 
 flutter {
@@ -53,7 +76,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-
-
-    
