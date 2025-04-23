@@ -17,7 +17,6 @@ import 'package:goods_clients/presentation/custom_widgets/custom_textfield.dart'
 import 'package:goods_clients/presentation/screens/auth_screens/auth_custom_widgets.dart/build_image_picker.dart';
 import 'package:goods_clients/services/auth_service.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class BuildFields extends StatefulWidget {
   const BuildFields({super.key});
