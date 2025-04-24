@@ -5,6 +5,7 @@ import 'package:goods_clients/business_logic/cubits/available/available_cubit.da
 import 'package:goods_clients/business_logic/cubits/cart/cart_cubit.dart';
 
 import 'package:goods_clients/presentation/custom_widgets/custom_buttons/custom_buttons.dart';
+import 'package:goods_clients/presentation/custom_widgets/overly_message.dart';
 
 class CounterRow extends StatefulWidget {
   final TextEditingController controller;
@@ -110,7 +111,6 @@ class _CounterRowState extends State<CounterRow> {
             iconColor: Colors.white,
             onPressed: () {
               HapticFeedback.heavyImpact();
-
               widget.onTapRemove();
             },
           )
@@ -124,18 +124,21 @@ class _CounterRowState extends State<CounterRow> {
             iconColor: Colors.white,
             onPressed: () {
               HapticFeedback.heavyImpact();
-
               decrement();
               updateStateAndCubits();
             },
           );
   }
 
+  /// Attempts to increase the value, showing a message if already at max.
   void increment() {
     int currentValue = int.tryParse(widget.controller.text) ?? minLimit;
-    if (currentValue < maxLimit) {
+    if (currentValue >= maxLimit) {
+      _showMaxLimitMessage();
+    } else {
+      final newValue = currentValue + 1;
       setState(() {
-        widget.controller.text = (currentValue + 1).toString();
+        widget.controller.text = newValue.toString();
       });
     }
   }
@@ -165,6 +168,15 @@ class _CounterRowState extends State<CounterRow> {
     } else if (currentValue > maxLimit) {
       widget.controller.text = maxLimit.toString();
     }
+  }
+
+  void _showMaxLimitMessage() {
+    showCustomOverlayMessage(
+      context,
+      'لقد بلغت الحد الأقصي لهذا المنتج',
+      textColor: Colors.grey,
+      backgroundColor: Colors.yellow,
+    );
   }
 
   void updateStateAndCubits() {

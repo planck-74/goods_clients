@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:goods_clients/data/global/theme/theme_data.dart';
+import 'package:goods_clients/data/global/theme/theme_data.dart'; // assuming dark red color is defined here
 import 'package:url_launcher/url_launcher.dart';
 
 void showCallDialog(BuildContext context) {
@@ -8,53 +8,25 @@ void showCallDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        backgroundColor: whiteColor,
+        backgroundColor: Colors.white, // Light background color
         title: const Text(
           'إضغط لنسخ الرقم',
           style: TextStyle(
-            color: Colors.amber,
-            fontSize: 14,
+            color: Color(0xFFB71C1C), // Dark Red color for title
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(5.0), // More padding for space
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              InkWell(
-                onTap: () => _launchPhoneNumber('01116475757', context),
-                child: const Row(
-                  children: [
-                    Icon(Icons.copy, color: darkBlueColor),
-                    SizedBox(width: 8),
-                    Text(
-                      '01116475757',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(endIndent: 80),
-              InkWell(
-                onTap: () => _launchPhoneNumber('01022002286', context),
-                child: const Row(
-                  children: [
-                    Icon(Icons.copy, color: darkBlueColor),
-                    SizedBox(width: 8),
-                    Text(
-                      '01022002286',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildPhoneNumberRow('01116475757', context),
+              const Divider(
+                  color: Colors.grey,
+                  thickness: 0.5), // Divider with light grey
+              _buildPhoneNumberRow('01022002286', context),
             ],
           ),
         ),
@@ -66,13 +38,35 @@ void showCallDialog(BuildContext context) {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
-                color: darkBlueColor,
+                color: Color(0xFFB71C1C), // Dark red color for button text
               ),
             ),
           ),
         ],
       );
     },
+  );
+}
+
+// Function to build phone number row
+Widget _buildPhoneNumberRow(String phoneNumber, BuildContext context) {
+  return InkWell(
+    onTap: () => _launchPhoneNumber(phoneNumber, context),
+    child: Row(
+      children: [
+        Icon(Icons.copy,
+            color: Color(0xFFB71C1C)), // Dark red for the copy icon
+        const SizedBox(width: 12),
+        Text(
+          phoneNumber,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.black, // Black color for text on light background
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -94,6 +88,10 @@ Future<void> _launchPhoneNumber(
 
 void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message)),
+    SnackBar(
+      content: Text(message),
+      backgroundColor:
+          Color(0xFFB71C1C), // Dark red for the snackbar background
+    ),
   );
 }
