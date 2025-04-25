@@ -44,45 +44,47 @@ class _ProductsState extends State<Products> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Carousel(),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 50,
-                child: Row(
-                  children: [
-                    Text(
-                      'تــرنــد',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    Image(image: AssetImage('assets/animations/fire.gif')),
-                    Text(
-                      '(الأكثر مبيعـاً)',
-                      style: TextStyle(color: Colors.blueGrey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            BlocBuilder<AvailableCubit, AvailableState>(
-              builder: (context, state) {
-                return state is AvailableLoaded
-                    ? ProductsCard(products: state.trendingProducts)
-                    : SizedBox(
-                        height: 240,
-                        child: ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return const Skeletonizer(
-                                  enableSwitchAnimation: true,
-                                  enabled: true,
-                                  child: ProductsCardSkeleton());
-                            }),
-                      );
-              },
-            ),
+
+            // const Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: SizedBox(
+            //     height: 50,
+            //     child: Row(
+            //       children: [
+            //         Text(
+            //           'تــرنــد',
+            //           style:
+            //               TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            //         ),
+            //         Image(image: AssetImage('assets/animations/fire.gif')),
+            //         Text(
+            //           '(الأكثر مبيعـاً)',
+            //           style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // BlocBuilder<AvailableCubit, AvailableState>(
+            //   builder: (context, state) {
+            //     return state is AvailableLoaded
+            //         ? ProductsCard(products: state.trendingProducts)
+            //         : SizedBox(
+            //             height: 240,
+            //             child: ListView.builder(
+            //                 physics: const NeverScrollableScrollPhysics(),
+            //                 scrollDirection: Axis.horizontal,
+            //                 itemCount: 5,
+            //                 itemBuilder: (context, index) {
+            //                   return const Skeletonizer(
+            //                       enableSwitchAnimation: true,
+            //                       enabled: true,
+            //                       child: ProductsCardSkeleton());
+            //                 }),
+            //           );
+            //   },
+            // ),
+
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Row(

@@ -12,10 +12,10 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   List<String> carouselImages = [
-    'assets/images/17.jpg',
-    'assets/images/18.webp',
-    'assets/images/19.webp',
-    'assets/images/21.jpg',
+    'assets/images/1000002880.png',
+    'assets/images/1000002880.png',
+    'assets/images/1000002880.png',
+    'assets/images/1000002880.png',
   ];
   int currentIndex = 0;
 
@@ -41,25 +41,21 @@ class _CarouselState extends State<Carousel> {
           ),
           options: CarouselOptions(
             autoPlay: true,
-            autoPlayInterval:
-                const Duration(seconds: 5), 
-            autoPlayAnimationDuration:
-                const Duration(milliseconds: 800), 
-            autoPlayCurve:
-                Curves.fastOutSlowIn, 
+            autoPlayInterval: const Duration(seconds: 5),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            autoPlayCurve: Curves.fastOutSlowIn,
             enlargeCenterPage: true,
             viewportFraction: 0.97,
             aspectRatio: 2.0,
-            initialPage: 2,
+            initialPage: 0,
             onPageChanged: (index, reason) {
               setState(() {
-                currentIndex = index; 
+                currentIndex = index;
               });
             },
           ),
         ),
-
-        const SizedBox(height: 20), 
+        const SizedBox(height: 20),
         AnimatedSmoothIndicator(
           activeIndex: currentIndex,
           count: carouselImages.length,
