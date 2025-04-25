@@ -12,6 +12,7 @@ import 'package:goods_clients/presentation/screens/navigator_bar_screens/navigat
 class MainMarketCard extends StatefulWidget {
   final TextEditingController controller;
   final Map<String, dynamic> product;
+
   const MainMarketCard({
     super.key,
     required this.controller,
@@ -27,136 +28,196 @@ class _MainMarketCardState extends State<MainMarketCard> {
   Widget build(BuildContext context) {
     final dynamicData = widget.product['dynamicData'] as Map<String, dynamic>;
     final staticData = widget.product['staticData'] as Map<String, dynamic>;
-    late final String productId = 'product_${staticData['productId']}';
+    final productId = 'product_${staticData['productId']}';
+
+    // تحقّق إذا كان المنتج مصنع v7
+    final isV7 =
+        (staticData['manufacturer']?.toString().toLowerCase().trim() == 'v7');
 
     final controller = context.read<AvailableCubit>().controllers[productId] ??
-        TextEditingController(text: '1000');
+        TextEditingController(text: '0');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 6),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          boxShadow: [BoxShadow(spreadRadius: 0.1, blurRadius: 0.5)],
-        ),
-        child: Stack(children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildProductImage(
-                staticData: staticData,
-                height: 160,
-                width: 100,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildProductDetails(staticData, dynamicData),
-                      const SizedBox(height: 6),
-                      BlocBuilder<AvailableCubit, AvailableState>(
-                        builder: (context, state) {
-                          if (state is AvailableLoaded) {
-                            int currentQty =
-                                int.tryParse(widget.controller.text) ?? 0;
-                            int maxOfferQty =
-                                dynamicData['maxOrderQuantityForOffer'] ??
-                                    currentQty;
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                const BoxShadow(
+                  spreadRadius: 0.1,
+                  blurRadius: 0.5,
+                  color: Colors.black26,
+                ),
+                if (isV7)
+                  BoxShadow(
+                    color: Colors.green.withOpacity(0.8),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  ),
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildProductImage(
+                  staticData: staticData,
+                  height: 160,
+                  width: 100,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildProductDetails(staticData, dynamicData),
+                        const SizedBox(height: 6),
+                        BlocBuilder<AvailableCubit, AvailableState>(
+                          builder: (context, state) {
+                            if (state is AvailableLoaded) {
+                              int currentQty =
+                                  int.tryParse(widget.controller.text) ?? 0;
+                              int maxOfferQty =
+                                  dynamicData['maxOrderQuantityForOffer'] ??
+                                      currentQty;
 
-                            Widget extraCostWidget = const SizedBox();
-                            if (dynamicData['isOnSale'] == true &&
-                                currentQty > maxOfferQty) {
-                              int extraQty = currentQty - maxOfferQty;
-                              int normalPrice = dynamicData['price'];
-                              extraCostWidget = Container(
-                                margin: const EdgeInsets.only(top: 8),
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade100,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  'تم اختيار $extraQty منتجات بالسعر الأصلي ('
-                                  '${normalPrice.toString()} جـ ). ',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
+                              Widget extraCostWidget = const SizedBox();
+                              if (dynamicData['isOnSale'] == true &&
+                                  currentQty > maxOfferQty) {
+                                int extraQty = currentQty - maxOfferQty;
+                                int normalPrice = dynamicData['price'];
+                                extraCostWidget = Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade100,
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                ),
-                              );
-                            }
-                            final isAddedToCart =
-                                state.addToCart[productId] ?? false;
+                                  child: Text(
+                                    'تم اختيار $extraQty منتجات بالسعر الأصلي '
+                                    '(${normalPrice.toString()} جـ).',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                );
+                              }
+                              final isAddedToCart =
+                                  state.addToCart[productId] ?? false;
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  transitionBuilder: (child, animation) =>
-                                      FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  ),
-                                  child: isAddedToCart
-                                      ? CounterRow(
-                                          controller: widget.controller,
-                                          onTapRemove: () => removeFromCart(
-                                            context,
-                                            controller,
-                                            productId,
-                                          ),
-                                          dynamicData: dynamicData,
-                                        )
-                                      : GestureDetector(
-                                          onTap: () => addToCart(
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 300),
+                                    transitionBuilder: (child, animation) =>
+                                        FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                    child: isAddedToCart
+                                        ? CounterRow(
+                                            controller: widget.controller,
+                                            onTapRemove: () => removeFromCart(
+                                              context,
+                                              controller,
+                                              productId,
+                                            ),
+                                            dynamicData: dynamicData,
+                                          )
+                                        : GestureDetector(
+                                            onTap: () => addToCart(
                                               context,
                                               controller,
                                               productId,
                                               dynamicData,
                                               staticData,
-                                              mounted),
-                                          child: addButton(),
-                                        ),
-                                ),
-                                extraCostWidget
-                              ],
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                    ],
+                                              mounted,
+                                            ),
+                                            child: addButton(),
+                                          ),
+                                  ),
+                                  extraCostWidget
+                                ],
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ويدجت "منتج مميز" أعلى اليمين إذا كان v7
+          if (isV7)
+            Positioned(
+              top: -4,
+              right: -4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(6),
+                    bottomLeft: Radius.circular(6),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.6),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'منتج مميز',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
-          ),
-          if (dynamicData['isOnSale'] == true) ...[
-            Container(
-              height: 20,
-              width: 35,
-              decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.only(topRight: Radius.circular(6)),
-                  color: Colors.lightGreenAccent.withOpacity(0.5)),
-              child: const Center(
-                child: Text(
-                  'عرض',
-                  style: TextStyle(
+            ),
+
+          // ويدجت "عرض" للبضائع المخفضة
+          if (dynamicData['isOnSale'] == true)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                height: 20,
+                width: 35,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(6),
+                  ),
+                  color: Colors.lightGreenAccent.withOpacity(0.5),
+                ),
+                child: const Center(
+                  child: Text(
+                    'عرض',
+                    style: TextStyle(
                       fontSize: 10,
                       color: Colors.green,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            )
-          ]
-        ]),
+            ),
+        ],
       ),
     );
   }
@@ -169,17 +230,14 @@ class _MainMarketCardState extends State<MainMarketCard> {
 
     try {
       await context.read<CartCubit>().removeData(productId);
-
       if (!mounted) return;
 
       setState(() {
         context.read<AvailableCubit>().addToCart[productId] = false;
       });
-
       context.read<CartCubit>().removeFromCart(productId);
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to remove from cart: $e')),
       );

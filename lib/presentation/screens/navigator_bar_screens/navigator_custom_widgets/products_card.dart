@@ -49,7 +49,7 @@ class ProductsCard extends StatelessWidget {
                               const Padding(
                                 padding: EdgeInsets.fromLTRB(0, 6, 0, 4),
                                 child: Text(
-                                  'الحساب الرسمي',
+                                  'ابــو جبــــــــة',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Color.fromARGB(255, 14, 103, 151),

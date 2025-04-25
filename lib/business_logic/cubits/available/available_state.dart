@@ -15,6 +15,7 @@ class AvailableLoaded extends AvailableState {
   final Map<String, bool> addToCart;
   final int totalWithOffer;
   final int total;
+  final List<Map<String, dynamic>> v7Products; // ✅ أضف هذا
 
   AvailableLoaded({
     required this.trendingProducts,
@@ -25,6 +26,7 @@ class AvailableLoaded extends AvailableState {
     required this.addToCart,
     required this.totalWithOffer,
     required this.total,
+    this.v7Products = const [], // ✅ قيمة افتراضية
   });
 
   @override
@@ -37,6 +39,7 @@ class AvailableLoaded extends AvailableState {
         addToCart,
         totalWithOffer,
         total,
+        v7Products,
       ];
 }
 

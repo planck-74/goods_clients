@@ -11,10 +11,10 @@ class AvailableCubit extends Cubit<AvailableState> {
   List<Map<String, dynamic>> trendingProducts = [];
   List<Map<String, dynamic>> onSaleProducts = [];
   List<QueryDocumentSnapshot> availableProducts = [];
-
   List<Map<String, dynamic>> productData = [];
-
   List<Map<String, dynamic>> allProducts = [];
+  List<Map<String, dynamic>> v7Products = [];
+
   Map<String, TextEditingController> controllers = {};
   Map<String, bool> addToCart = {};
 
@@ -23,6 +23,14 @@ class AvailableCubit extends Cubit<AvailableState> {
   List<Map<String, dynamic>> combinedProducts = [];
   int totalWithOffer = 0;
   int total = 0;
+  void filterV7Products() {
+    v7Products = allProducts.where((product) {
+      final manufacturer = product['staticData']?['manufacturer'];
+      return manufacturer == 'v7';
+    }).toList();
+
+    _emitLoadedState(); // عشان يحدث الـ UI بعد التصفية
+  }
 
   int calculateTotal() {
     int sum = 0;
@@ -83,6 +91,7 @@ class AvailableCubit extends Cubit<AvailableState> {
     total = calculateTotal();
     totalWithOffer = calculateTotalWithOffer();
     emit(AvailableLoaded(
+      v7Products: v7Products,
       trendingProducts: trendingProducts,
       onSaleProducts: onSaleProducts,
       productData: productData,
@@ -131,6 +140,7 @@ class AvailableCubit extends Cubit<AvailableState> {
       productData = List.from(allProducts);
       dataFetched = true;
       emit(AvailableLoaded(
+        v7Products: v7Products,
         trendingProducts: trendingProducts,
         onSaleProducts: onSaleProducts,
         productData: productData,
@@ -141,6 +151,7 @@ class AvailableCubit extends Cubit<AvailableState> {
         total: total,
       ));
       fetchTrendingProducts();
+      filterV7Products();
     } catch (e) {
       emit(AvailableError('Failed to fetch products: $e'));
     }
@@ -188,6 +199,7 @@ class AvailableCubit extends Cubit<AvailableState> {
       }).toList();
     }
     emit(AvailableLoaded(
+      v7Products: v7Products,
       trendingProducts: trendingProducts,
       onSaleProducts: onSaleProducts,
       productData: productData,
@@ -208,6 +220,7 @@ class AvailableCubit extends Cubit<AvailableState> {
       }).toList();
     }
     emit(AvailableLoaded(
+      v7Products: v7Products,
       trendingProducts: trendingProducts,
       onSaleProducts: onSaleProducts,
       productData: productData,
@@ -234,6 +247,7 @@ class AvailableCubit extends Cubit<AvailableState> {
         });
       trendingProducts = trendingProducts.take(10).toList();
       emit(AvailableLoaded(
+        v7Products: v7Products,
         trendingProducts: trendingProducts,
         onSaleProducts: onSaleProducts,
         productData: productData,
@@ -262,6 +276,7 @@ class AvailableCubit extends Cubit<AvailableState> {
     if (state is AvailableLoaded) {
       final current = state as AvailableLoaded;
       emit(AvailableLoaded(
+        v7Products: v7Products,
         trendingProducts: current.trendingProducts,
         onSaleProducts: current.onSaleProducts,
         productData: productData,

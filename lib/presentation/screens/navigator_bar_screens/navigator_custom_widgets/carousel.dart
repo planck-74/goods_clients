@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Carousel extends StatefulWidget {
@@ -12,10 +11,9 @@ class Carousel extends StatefulWidget {
 
 class _CarouselState extends State<Carousel> {
   List<String> carouselImages = [
-    'assets/images/17.jpg',
-    'assets/images/18.webp',
-    'assets/images/19.webp',
-    'assets/images/21.jpg',
+    'assets/images/1.png',
+    'assets/images/2.png',
+    'assets/images/3.png',
   ];
   int currentIndex = 0;
 
@@ -41,30 +39,26 @@ class _CarouselState extends State<Carousel> {
           ),
           options: CarouselOptions(
             autoPlay: true,
-            autoPlayInterval:
-                const Duration(seconds: 5), 
-            autoPlayAnimationDuration:
-                const Duration(milliseconds: 800), 
-            autoPlayCurve:
-                Curves.fastOutSlowIn, 
+            autoPlayInterval: const Duration(seconds: 5),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            autoPlayCurve: Curves.fastOutSlowIn,
             enlargeCenterPage: true,
             viewportFraction: 0.97,
             aspectRatio: 2.0,
             initialPage: 2,
             onPageChanged: (index, reason) {
               setState(() {
-                currentIndex = index; 
+                currentIndex = index;
               });
             },
           ),
         ),
-
-        const SizedBox(height: 20), 
+        const SizedBox(height: 20),
         AnimatedSmoothIndicator(
           activeIndex: currentIndex,
           count: carouselImages.length,
           effect: const ExpandingDotsEffect(
-            activeDotColor: primaryColor,
+            activeDotColor: Colors.green,
             dotColor: Colors.blueGrey,
             dotHeight: 8,
             dotWidth: 8,
