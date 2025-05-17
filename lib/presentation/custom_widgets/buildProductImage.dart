@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 
 Widget buildProductImage({
-  required Map<String, dynamic>? staticData,
+  required Map<String, dynamic>? product,
   double? height,
   double? width,
 }) {
@@ -12,12 +12,12 @@ Widget buildProductImage({
     width: width ?? 100,
     child: ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
-      child: staticData != null &&
-              staticData.containsKey('imageUrl') &&
-              staticData['imageUrl'] != null &&
-              staticData['imageUrl'].isNotEmpty
+      child: product != null &&
+              product.containsKey('imageUrl') &&
+              product['imageUrl'] != null &&
+              product['imageUrl'].isNotEmpty
           ? CachedNetworkImage(
-              imageUrl: staticData['imageUrl'],
+              imageUrl: product['imageUrl'],
               fit: BoxFit.cover,
               placeholder: (context, url) => const Center(
                   child: SizedBox(

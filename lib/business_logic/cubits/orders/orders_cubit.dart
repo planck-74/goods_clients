@@ -21,14 +21,14 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   Future<List<Map<String, dynamic>>> fetchOrders() async {
     emit(OrdersLoading());
+    newOrders = [];
+    previousOrders = [];
     try {
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance.collection('orders').get();
 
-      final List<Map<String, dynamic>> orders = querySnapshot.docs
-          .map((doc) =>
-              doc.data()..['id'] = doc.id) 
-          .toList();
+      final List<Map<String, dynamic>> orders =
+          querySnapshot.docs.map((doc) => doc.data()..['id'] = doc.id).toList();
 
       if (orders.isNotEmpty) {
         for (var order in orders) {

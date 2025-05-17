@@ -8,14 +8,13 @@ import 'package:goods_clients/presentation/custom_widgets/build_product_details.
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/navigator_custom_widgets/counters.dart';
 
 class CartCard extends StatefulWidget {
-  final Map<String, dynamic> staticData;
-  final Map<String, dynamic> dynamicData;
+  final Map<String, dynamic> product;
+
   final TextEditingController controller;
 
   const CartCard({
     super.key,
-    required this.staticData,
-    required this.dynamicData,
+    required this.product,
     required this.controller,
   });
 
@@ -26,9 +25,8 @@ class CartCard extends StatefulWidget {
 class _CartCardState extends State<CartCard> {
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> staticData = widget.staticData;
-    final Map<String, dynamic> dynamicData = widget.dynamicData;
-    String productId = 'product_${staticData['productId']}';
+    final Map<String, dynamic> product = widget.product;
+    String productId = 'product_${product['productId']}';
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4),
@@ -44,7 +42,7 @@ class _CartCardState extends State<CartCard> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                buildProductImage(staticData: widget.staticData),
+                buildProductImage(product: widget.product),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Padding(
@@ -52,21 +50,23 @@ class _CartCardState extends State<CartCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        buildProductDetails(staticData, dynamicData),
+                        buildProductDetails(
+                          product,
+                        ),
                         const SizedBox(height: 8),
                         BlocBuilder<AvailableCubit, AvailableState>(
                           builder: (context, state) {
                             int currentQty =
                                 int.tryParse(widget.controller.text) ?? 0;
-                            int maxOfferQty = widget
-                                    .dynamicData['maxOrderQuantityForOffer'] ??
-                                currentQty;
+                            int maxOfferQty =
+                                widget.product['maxOrderQuantityForOffer'] ??
+                                    currentQty;
 
                             Widget extraCostWidget = const SizedBox();
-                            if (widget.dynamicData['isOnSale'] == true &&
+                            if (widget.product['isOnSale'] == true &&
                                 currentQty > maxOfferQty) {
                               int extraQty = currentQty - maxOfferQty;
-                              int normalPrice = widget.dynamicData['price'];
+                              int normalPrice = widget.product['price'];
                               extraCostWidget = Container(
                                 margin: const EdgeInsets.only(top: 8),
                                 padding: const EdgeInsets.all(8),
@@ -110,7 +110,7 @@ class _CartCardState extends State<CartCard> {
                                         .read<CartCubit>()
                                         .removeFromCart(productId);
                                   },
-                                  dynamicData: widget.dynamicData,
+                                  product: widget.product,
                                 ),
                                 extraCostWidget,
                               ],
@@ -123,7 +123,7 @@ class _CartCardState extends State<CartCard> {
                 ),
               ],
             ),
-            if (widget.dynamicData['isOnSale'] == true)
+            if (widget.product['isOnSale'] == true)
               Container(
                 height: 20,
                 width: 35,

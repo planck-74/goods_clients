@@ -84,10 +84,10 @@ class _CartState extends State<Cart> {
                       child: ListView.builder(
                         itemCount: cartItems.length,
                         itemBuilder: (context, index) {
-                          Map cartItem = cartItems[index];
+                          Map<String, dynamic> cartItem = cartItems[index];
+
                           return CartCard(
-                            staticData: cartItem['staticData'],
-                            dynamicData: cartItem['dynamicData'],
+                            product: cartItem['product'],
                             controller: cartItem['controller'],
                           );
                         },

@@ -10,13 +10,13 @@ import 'package:goods_clients/presentation/custom_widgets/overly_message.dart';
 class CounterRow extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onTapRemove;
-  final Map dynamicData;
+  final Map product;
 
   const CounterRow({
     super.key,
     required this.controller,
     required this.onTapRemove,
-    required this.dynamicData,
+    required this.product,
   });
 
   @override
@@ -30,8 +30,8 @@ class _CounterRowState extends State<CounterRow> {
   @override
   void initState() {
     super.initState();
-    maxLimit = widget.dynamicData['maxOrderQuantity'] ?? 10000;
-    minLimit = widget.dynamicData['minOrderQuantity'] ?? 1;
+    maxLimit = widget.product['maxOrderQuantity'] ?? 10000;
+    minLimit = widget.product['minOrderQuantity'] ?? 1;
   }
 
   @override

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class AvailableState {}
+abstract class AvailableState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class AvailableInitial extends AvailableState {}
 
@@ -15,7 +19,7 @@ class AvailableLoaded extends AvailableState {
   final Map<String, bool> addToCart;
   final int totalWithOffer;
   final int total;
-
+  final bool isLoadingMore;
   AvailableLoaded({
     required this.trendingProducts,
     required this.onSaleProducts,
@@ -25,6 +29,7 @@ class AvailableLoaded extends AvailableState {
     required this.addToCart,
     required this.totalWithOffer,
     required this.total,
+    this.isLoadingMore = false,
   });
 
   @override
@@ -37,6 +42,7 @@ class AvailableLoaded extends AvailableState {
         addToCart,
         totalWithOffer,
         total,
+        isLoadingMore,
       ];
 }
 

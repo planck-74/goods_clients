@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:goods_clients/data/global/theme/theme_data.dart'; // assuming dark red color is defined here
+// assuming dark red color is defined here
 import 'package:url_launcher/url_launcher.dart';
 
 void showCallDialog(BuildContext context) {
@@ -54,7 +54,7 @@ Widget _buildPhoneNumberRow(String phoneNumber, BuildContext context) {
     onTap: () => _launchPhoneNumber(phoneNumber, context),
     child: Row(
       children: [
-        Icon(Icons.copy,
+        const Icon(Icons.copy,
             color: Color(0xFFB71C1C)), // Dark red for the copy icon
         const SizedBox(width: 12),
         Text(
@@ -91,7 +91,7 @@ void showSnackBar(BuildContext context, String message) {
     SnackBar(
       content: Text(message),
       backgroundColor:
-          Color(0xFFB71C1C), // Dark red for the snackbar background
+          const Color(0xFFB71C1C), // Dark red for the snackbar background
     ),
   );
 }

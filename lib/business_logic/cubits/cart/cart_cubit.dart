@@ -11,11 +11,11 @@ class CartCubit extends Cubit<CartState> {
   int summation = 0;
   int totalWithOffer = 0;
 
-  void addToCart(Map<String, dynamic> product) {
+  void addToCart(
+      Map<String, dynamic> product, TextEditingController controller) {
     cartItems.add({
-      'staticData': product['staticData'],
-      'dynamicData': product['dynamicData'],
-      'controller': product['controller'],
+      'product': product,
+      'controller': controller,
     });
   }
 
@@ -42,7 +42,7 @@ class CartCubit extends Cubit<CartState> {
   Future<void> removeFromCart(String docId) async {
     final unprefixedProductId = docId.replaceFirst('product_', '');
     cartItems.removeWhere(
-        (item) => item['staticData']['productId'] == unprefixedProductId);
+        (item) => item['product']['productId'] == unprefixedProductId);
     emit(CartInitial());
     if (cartItems.isNotEmpty) {
       updateTotals();
@@ -84,8 +84,7 @@ class CartCubit extends Cubit<CartState> {
           : int.tryParse(orderProduct['controller']?.toString() ?? '0') ?? 0;
       final newController = TextEditingController(text: quantity.toString());
       cartItems.add({
-        'staticData': orderProduct['staticData'],
-        'dynamicData': orderProduct['dynamicData'],
+        'product': orderProduct['product'],
         'controller': newController,
       });
     }
@@ -96,7 +95,7 @@ class CartCubit extends Cubit<CartState> {
     int sum = 0;
     for (var item in cartItems) {
       int quantity = int.tryParse(item['controller']?.text ?? '0') ?? 0;
-      int price = item['dynamicData']['price'] ?? 0;
+      int price = item['product']['price'] ?? 0;
       sum += price * quantity;
     }
     return sum;
@@ -106,15 +105,15 @@ class CartCubit extends Cubit<CartState> {
     int sum = 0;
     for (var item in cartItems) {
       int quantity = int.tryParse(item['controller']?.text ?? '0') ?? 0;
-      int normalPrice = item['dynamicData']['price'] ?? 0;
-      bool isOnSale = item['dynamicData']['isOnSale'] ?? false;
+      int normalPrice = item['product']['price'] ?? 0;
+      bool isOnSale = item['product']['isOnSale'] ?? false;
       if (isOnSale) {
-        var offerRaw = item['dynamicData']['offerPrice'];
+        var offerRaw = item['product']['offerPrice'];
         int offerPrice = offerRaw is int
             ? offerRaw
             : (offerRaw != null ? offerRaw.toDouble().round() : normalPrice);
         int maxOfferQty =
-            item['dynamicData']['maxOrderQuantityForOffer'] ?? quantity;
+            item['product']['maxOrderQuantityForOffer'] ?? quantity;
         if (quantity <= maxOfferQty) {
           sum += offerPrice * quantity;
         } else {

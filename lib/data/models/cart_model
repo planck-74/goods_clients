@@ -1,0 +1,70 @@
+
+// Cart Item Model
+class CartItem {
+  final String productId;
+  final Map<String, dynamic> product;
+  final TextEditingController quantityController;
+  final int quantity;
+
+  CartItem({
+    required this.productId,
+    required this.product,
+    required this.quantityController,
+    required this.quantity,
+  });
+
+  // Create CartItem from a product map
+  factory CartItem.fromProduct(Map<String, dynamic> product,
+      {int initialQuantity = 0}) {
+    String pid = product['productId'].toString();
+    return CartItem(
+      productId: pid,
+      product: product,
+      quantityController:
+          TextEditingController(text: initialQuantity.toString()),
+      quantity: initialQuantity,
+    );
+  }
+
+  // Create a new CartItem with updated quantity
+  CartItem copyWithQuantity(int newQuantity) {
+    return CartItem(
+      productId: productId,
+      product: product,
+      quantityController: quantityController..text = newQuantity.toString(),
+      quantity: newQuantity,
+    );
+  }
+
+  // Calculate item's regular price
+  int get regularPrice => (product['price'] as int? ?? 0) * quantity;
+
+  // Calculate item's price with offer if applicable
+  int get priceWithOffer {
+    int normalPrice = product['price'] as int? ?? 0;
+    bool isOnSale = product['isOnSale'] as bool? ?? false;
+
+    if (!isOnSale) return normalPrice * quantity;
+
+    int offerPrice = product['offerPrice'] as int? ?? normalPrice;
+    int maxOfferQuantity =
+        product['maxOrderQuantityForOffer'] as int? ?? quantity;
+
+    if (quantity <= maxOfferQuantity) {
+      return offerPrice * quantity;
+    } else {
+      return offerPrice * maxOfferQuantity +
+          normalPrice * (quantity - maxOfferQuantity);
+    }
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CartItem &&
+          runtimeType == other.runtimeType &&
+          productId == other.productId;
+
+  @override
+  int get hashCode => productId.hashCode;
+}

@@ -27,12 +27,13 @@ class ProductsCard extends StatelessWidget {
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    final productId =
-                        'product_${product['staticData']['productId']}';
+
+                    late final String productId =
+                        'product_${product['productId']}';
+
                     final controller =
                         context.read<AvailableCubit>().controllers[productId] ??
-                            TextEditingController(text: '1000');
-
+                            TextEditingController(text: '10');
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                       child: Container(
@@ -60,7 +61,7 @@ class ProductsCard extends StatelessWidget {
                                 width: 100,
                                 child: buildProductImage(
                                   height: 100,
-                                  staticData: product['staticData'],
+                                  product: product,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -71,20 +72,19 @@ class ProductsCard extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '${product['staticData']['name']}',
+                                        '${product['name']}',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 14,
                                         ),
                                         softWrap: true,
                                       ),
-                                      if (product['staticData']['size'] !=
-                                          null) ...[
+                                      if (product['size'] != null) ...[
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 4.0),
                                           child: Text(
-                                            '- ${product['staticData']['size']}',
+                                            '- ${product['size']}',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w300,
                                               fontSize: 14,
@@ -93,11 +93,10 @@ class ProductsCard extends StatelessWidget {
                                           ),
                                         ),
                                       ],
-                                      if (product['staticData']['note'] !=
-                                              null &&
-                                          product['staticData']['note'] != '')
+                                      if (product['note'] != null &&
+                                          product['note'] != '')
                                         Text(
-                                          '(${product['staticData']['note']})',
+                                          '(${product['note']})',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w300,
                                             fontSize: 14,
@@ -108,21 +107,21 @@ class ProductsCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              if (product['dynamicData']['isOnSale'] == false)
+                              if (product['isOnSale'] == false)
                                 Text(
-                                  '${product['dynamicData']['price'].toString()} جـ',
+                                  '${product['price'].toString()} جـ',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.green,
                                     fontSize: 18,
                                   ),
                                 ),
-                              if (product['dynamicData']['isOnSale'] == true)
+                              if (product['isOnSale'] == true)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      '${product['dynamicData']['offerPrice'].toString()} جـ',
+                                      '${product['offerPrice'].toString()} جـ',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
@@ -131,7 +130,7 @@ class ProductsCard extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      '${product['dynamicData']['price'].toString()} جـ',
+                                      '${product['price'].toString()} جـ',
                                       style: const TextStyle(
                                         decoration: TextDecoration.lineThrough,
                                         fontWeight: FontWeight.bold,
@@ -180,7 +179,7 @@ class AddToCartButton extends StatefulWidget {
 class _AddToCartButtonState extends State<AddToCartButton> {
   @override
   Widget build(BuildContext context) {
-    final productId = 'product_${widget.product['staticData']['productId']}';
+    final productId = 'product_${widget.product['productId']}';
 
     return BlocBuilder<AvailableCubit, AvailableState>(
       builder: (context, state) {
@@ -196,7 +195,7 @@ class _AddToCartButtonState extends State<AddToCartButton> {
               ? CounterRow(
                   key: const ValueKey("counter_row"),
                   controller: widget.controller,
-                  dynamicData: widget.product['dynamicData'],
+                  product: widget.product,
                   onTapRemove: () async {
                     widget.controller.text = '0';
                     context.read<AvailableCubit>().updateTotals();
@@ -242,6 +241,7 @@ class _AddToCartButtonState extends State<AddToCartButton> {
   Future<void> _addToCart(BuildContext context, Map<String, dynamic> product,
       String productId) async {
     HapticFeedback.heavyImpact();
+    print(productId);
 
     final availableCubit = context.read<AvailableCubit>();
     final cartCubit = context.read<CartCubit>();
@@ -249,14 +249,12 @@ class _AddToCartButtonState extends State<AddToCartButton> {
     availableCubit.markProductAdded(productId);
 
     try {
-      widget.controller.text =
-          '${product['dynamicData']['minOrderQuantity'] ?? '1'}';
+      widget.controller.text = '${product['minOrderQuantity'] ?? '1'}';
       await cartCubit.saveData(productId, true);
-      cartCubit.addToCart({
-        'staticData': product['staticData'],
-        'dynamicData': product['dynamicData'],
-        'controller': widget.controller,
-      });
+      cartCubit.addToCart(
+        product,
+        widget.controller,
+      );
       cartCubit.updateCartItemsWithInts();
       availableCubit.updateTotals();
     } catch (e) {

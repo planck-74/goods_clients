@@ -7,6 +7,7 @@ import 'package:goods_clients/business_logic/routes.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/firebase_options.dart';
 import 'package:goods_clients/services/auth_service.dart';
+import 'package:goods_clients/services/notification_services.dart';
 import 'package:goods_clients/splash_screen.dart';
 
 void main() async {
@@ -14,7 +15,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await PushNotificationService().init();
   runApp(GoodsClients());
 }
 

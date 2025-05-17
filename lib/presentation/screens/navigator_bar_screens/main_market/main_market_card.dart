@@ -25,9 +25,8 @@ class MainMarketCard extends StatefulWidget {
 class _MainMarketCardState extends State<MainMarketCard> {
   @override
   Widget build(BuildContext context) {
-    final dynamicData = widget.product['dynamicData'] as Map<String, dynamic>;
-    final staticData = widget.product['staticData'] as Map<String, dynamic>;
-    late final String productId = 'product_${staticData['productId']}';
+    final Map<String, dynamic> product = widget.product;
+    late final String productId = 'product_${product['productId']}';
 
     final controller = context.read<AvailableCubit>().controllers[productId] ??
         TextEditingController(text: '1000');
@@ -46,7 +45,7 @@ class _MainMarketCardState extends State<MainMarketCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildProductImage(
-                staticData: staticData,
+                product: product,
                 height: 160,
                 width: 100,
               ),
@@ -57,7 +56,7 @@ class _MainMarketCardState extends State<MainMarketCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildProductDetails(staticData, dynamicData),
+                      buildProductDetails(product),
                       const SizedBox(height: 6),
                       BlocBuilder<AvailableCubit, AvailableState>(
                         builder: (context, state) {
@@ -65,14 +64,14 @@ class _MainMarketCardState extends State<MainMarketCard> {
                             int currentQty =
                                 int.tryParse(widget.controller.text) ?? 0;
                             int maxOfferQty =
-                                dynamicData['maxOrderQuantityForOffer'] ??
+                                product['maxOrderQuantityForOffer'] ??
                                     currentQty;
 
                             Widget extraCostWidget = const SizedBox();
-                            if (dynamicData['isOnSale'] == true &&
+                            if (product['isOnSale'] == true &&
                                 currentQty > maxOfferQty) {
                               int extraQty = currentQty - maxOfferQty;
-                              int normalPrice = dynamicData['price'];
+                              int normalPrice = product['price'];
                               extraCostWidget = Container(
                                 margin: const EdgeInsets.only(top: 8),
                                 padding: const EdgeInsets.all(8),
@@ -111,15 +110,14 @@ class _MainMarketCardState extends State<MainMarketCard> {
                                             controller,
                                             productId,
                                           ),
-                                          dynamicData: dynamicData,
+                                          product: product,
                                         )
                                       : GestureDetector(
                                           onTap: () => addToCart(
                                               context,
                                               controller,
                                               productId,
-                                              dynamicData,
-                                              staticData,
+                                              product,
                                               mounted),
                                           child: addButton(),
                                         ),
@@ -137,7 +135,7 @@ class _MainMarketCardState extends State<MainMarketCard> {
               ),
             ],
           ),
-          if (dynamicData['isOnSale'] == true) ...[
+          if (product['isOnSale'] == true) ...[
             Container(
               height: 20,
               width: 35,

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 
-Widget buildProductDetails(
-    Map<String, dynamic> staticData, Map<String, dynamic> dynamicData) {
+Widget buildProductDetails(Map<String, dynamic> product) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
         padding: const EdgeInsets.only(left: 2.0),
         child: Text(
-          '${staticData['name']} '
-          '${staticData['size'] != null ? '- ${staticData['size']}' : ''} '
-          '${staticData['note'] != null && staticData['note'] != '' ? '(${staticData['note']})' : ''}',
+          '${product['name']} '
+          '${product['size'] != null ? '- ${product['size']}' : ''} '
+          '${product['note'] != null && product['note'] != '' ? '(${product['note']})' : ''}',
           style: const TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 20,
@@ -20,11 +19,11 @@ Widget buildProductDetails(
         ),
       ),
       const SizedBox(height: 8),
-      if (dynamicData['isOnSale'] == true)
+      if (product['isOnSale'] == true)
         Row(
           children: [
             Text(
-              ' ${dynamicData['offerPrice'].toString()} جـ',
+              ' ${product['offerPrice'].toString()} جـ',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
@@ -33,7 +32,7 @@ Widget buildProductDetails(
             ),
             const SizedBox(width: 12),
             Text(
-              ' ${dynamicData['price'].toString()} جـ',
+              ' ${product['price'].toString()} جـ',
               style: const TextStyle(
                 decoration: TextDecoration.lineThrough,
                 fontWeight: FontWeight.bold,
@@ -45,7 +44,7 @@ Widget buildProductDetails(
         )
       else
         Text(
-          ' ${dynamicData['price'].toString()} جـ',
+          ' ${product['price'].toString()} جـ',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.green,
@@ -53,9 +52,9 @@ Widget buildProductDetails(
           ),
         ),
       const SizedBox(height: 6),
-      if (dynamicData['maxOrderQuantityForOffer'] != null)
+      if (product['maxOrderQuantityForOffer'] != null)
         Text(
-          'أقصي عدد لطلب العرض: ${dynamicData['maxOrderQuantityForOffer']}',
+          'أقصي عدد لطلب العرض: ${product['maxOrderQuantityForOffer']}',
           style: const TextStyle(
             color: darkBlueColor,
             fontWeight: FontWeight.normal,
@@ -67,14 +66,14 @@ Widget buildProductDetails(
         spacing: 9,
         children: [
           Text(
-            'أقصي عدد للطلب: ${dynamicData['maxOrderQuantity']}',
+            'أقصي عدد للطلب: ${product['maxOrderQuantity']}',
             style: const TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.normal,
                 fontSize: 12),
           ),
           Text(
-            'أقل عدد للطلب: ${dynamicData['minOrderQuantity']}',
+            'أقل عدد للطلب: ${product['minOrderQuantity']}',
             style: const TextStyle(
                 color: Colors.grey,
                 fontWeight: FontWeight.normal,

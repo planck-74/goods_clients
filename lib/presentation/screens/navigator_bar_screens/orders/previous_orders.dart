@@ -11,8 +11,7 @@ Map<String, dynamic> convertOrderProductToCartProduct(
       ? orderProduct['controller']
       : int.tryParse(orderProduct['controller']?.toString() ?? '0') ?? 0;
   return {
-    'staticData': orderProduct['staticData'],
-    'dynamicData': orderProduct['dynamicData'],
+    'product': orderProduct,
     'controller': TextEditingController(text: quantity.toString()),
   };
 }
@@ -37,7 +36,47 @@ class _PreviousOrdersState extends State<PreviousOrders> {
         child: BlocBuilder<OrdersCubit, OrdersState>(
           builder: (context, state) {
             if (state is OrdersLoaded) {
-              List orders = state.previousOrders;
+              // ترتيب الطلبات حسب التاريخ من الأحدث إلى الأقدم
+              List orders = List.from(state.previousOrders);
+              orders.sort((a, b) {
+                // الحصول على قيم التاريخ
+                dynamic dateA = a['date'];
+                dynamic dateB = b['date'];
+
+                // التعامل مع Timestamp أو Unix timestamp
+                DateTime timeA;
+                DateTime timeB;
+
+                if (dateA is int) {
+                  timeA = DateTime.fromMillisecondsSinceEpoch(dateA);
+                } else if (dateA != null &&
+                    dateA.runtimeType.toString().contains('Timestamp')) {
+                  timeA = dateA.toDate();
+                } else {
+                  try {
+                    timeA = DateTime.parse(dateA.toString());
+                  } catch (e) {
+                    return 0;
+                  }
+                }
+
+                if (dateB is int) {
+                  timeB = DateTime.fromMillisecondsSinceEpoch(dateB);
+                } else if (dateB != null &&
+                    dateB.runtimeType.toString().contains('Timestamp')) {
+                  timeB = dateB.toDate();
+                } else {
+                  try {
+                    timeB = DateTime.parse(dateB.toString());
+                  } catch (e) {
+                    return 0;
+                  }
+                }
+
+                // ترتيب تنازلي (الأحدث أولاً)
+                return timeB.compareTo(timeA);
+              });
+
               return ListView.builder(
                 itemCount: orders.length,
                 itemBuilder: (_, index) {
@@ -94,14 +133,12 @@ class _PreviousOrdersState extends State<PreviousOrders> {
                                           var product =
                                               orders[index]['products'][i];
 
-                                          int price = product['dynamicData']
-                                                  ['price'] ??
-                                              0;
+                                          int price =
+                                              product['product']['price'] ?? 0;
                                           int? offerPrice =
-                                              product['dynamicData']
-                                                  ['offerPrice'];
+                                              product['product']['offerPrice'];
                                           int? maxOrderQuantityForOffer =
-                                              product['dynamicData']
+                                              product['product']
                                                   ['maxOrderQuantityForOffer'];
                                           int unitsNumber =
                                               product['controller'];
@@ -156,7 +193,7 @@ class _PreviousOrdersState extends State<PreviousOrders> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      product['staticData']
+                                                      product['product']
                                                               ['name'] ??
                                                           '',
                                                       style: const TextStyle(
@@ -164,7 +201,7 @@ class _PreviousOrdersState extends State<PreviousOrders> {
                                                     ),
                                                     const SizedBox(height: 2),
                                                     Text(
-                                                      product['staticData']
+                                                      product['product']
                                                               ['size'] ??
                                                           '',
                                                       style: const TextStyle(
@@ -267,7 +304,7 @@ class _PreviousOrdersState extends State<PreviousOrders> {
             }
             return const Center(
               child: Text(
-                'لا توجد طلبات حالية',
+                'لا توجد طلبات سابقة',
                 style: TextStyle(fontSize: 18),
               ),
             );
