@@ -35,8 +35,8 @@ android {
         applicationId "com.planck.goodsclient"
         minSdk = 23
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
     }
 signingConfigs {
     create("release") {
@@ -52,8 +52,8 @@ signingConfigs {
 
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // signingConfig = signingConfigs.getByName("debug")
             signingConfig = signingConfigs.getByName("release")
@@ -80,4 +80,4 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 
-apply plugin: 'com.google.gms.google-services'
+ 
