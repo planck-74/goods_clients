@@ -9,7 +9,6 @@ import 'package:goods_clients/business_logic/cubits/location/location_cubit.dart
 import 'package:goods_clients/business_logic/cubits/orders/orders_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/sign/sign_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/upload_client_data/upload_client_data_cubit.dart';
-import 'package:goods_clients/data/repos/product_repository.dart';
 
 List<BlocProvider> providers = [
   BlocProvider<SignCubit>(

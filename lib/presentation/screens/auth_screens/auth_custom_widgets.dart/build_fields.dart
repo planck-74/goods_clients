@@ -276,7 +276,7 @@ class _BuildFieldsState extends State<BuildFields> {
                           onChanged: (value) {
                             if (value != null &&
                                 state.selectedGovernorate != null) {
-                              context.read<LocationCubit>().fetchNeighborhoods(
+                              context.read<LocationCubit>().fetchAreas(
                                   state.selectedGovernorate!, value);
                               context.read<ControllerCubit>().town = value;
                             }
@@ -284,8 +284,7 @@ class _BuildFieldsState extends State<BuildFields> {
                         ),
                       ),
                     const SizedBox(height: 12),
-                    if (state.selectedCity != null &&
-                        state.neighborhoods.isNotEmpty)
+                    if (state.selectedCity != null && state.areas.isNotEmpty)
                       Container(
                         height: 50,
                         width: screenWidth * 0.95,
@@ -311,17 +310,17 @@ class _BuildFieldsState extends State<BuildFields> {
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          value: state.selectedNeighborhood,
+                          value: state.selectedArea,
                           hint: const Text(
                             'اختر الحي (اختياري)',
                             style:
                                 TextStyle(color: Colors.blueGrey, fontSize: 18),
                           ),
-                          items: state.neighborhoods
-                              .map((neighborhood) => DropdownMenuItem(
-                                    value: neighborhood,
+                          items: state.areas
+                              .map((area) => DropdownMenuItem(
+                                    value: area,
                                     child: Text(
-                                      neighborhood,
+                                      area,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16),
@@ -330,14 +329,9 @@ class _BuildFieldsState extends State<BuildFields> {
                               .toList(),
                           onChanged: (value) {
                             if (value != null) {
-                              context
-                                  .read<LocationCubit>()
-                                  .selectNeighborhood(value);
+                              context.read<LocationCubit>().selectArea(value);
 
-                              context
-                                  .read<ControllerCubit>()
-                                  .neighborhood
-                                  .text = value;
+                              context.read<ControllerCubit>().area.text = value;
                             }
                           },
                         ),
@@ -373,7 +367,7 @@ class _BuildFieldsState extends State<BuildFields> {
                 final government = cubit.government?.trim() ?? '';
                 final town = cubit.town?.trim() ?? '';
 
-                final neighborhood = cubit.neighborhood.text.trim();
+                final area = cubit.area.text.trim();
                 final geoPoint = cubit.geoPoint ?? const GeoPoint(0, 0);
 
                 if (businessName.isEmpty ||
@@ -429,7 +423,7 @@ class _BuildFieldsState extends State<BuildFields> {
                           geoPoint: geoPoint,
                           government: government,
                           town: town,
-                          neighborhood: neighborhood,
+                          area: area,
                         ),
                         context);
 

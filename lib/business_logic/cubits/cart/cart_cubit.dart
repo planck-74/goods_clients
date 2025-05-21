@@ -8,7 +8,7 @@ class CartCubit extends Cubit<CartState> {
 
   List<Map<String, dynamic>> cartItems = [];
   List<Map<String, dynamic>> cartItemsWithInts = [];
-  int summation = 0;
+  int total = 0;
   int totalWithOffer = 0;
 
   void addToCart(
@@ -24,7 +24,7 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void emitCartUpdated() {
-    emit(CartUpdated(cartItems, summation, cartItemsWithInts, totalWithOffer));
+    emit(CartUpdated(cartItems, total, cartItemsWithInts, totalWithOffer));
   }
 
   void updateCartItemsWithInts() {
@@ -128,8 +128,8 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void updateTotals() {
-    summation = calculateTotal();
+    total = calculateTotal();
     totalWithOffer = calculateTotalWithOffer();
-    emit(CartUpdated(cartItems, summation, cartItemsWithInts, totalWithOffer));
+    emit(CartUpdated(cartItems, total, cartItemsWithInts, totalWithOffer));
   }
 }

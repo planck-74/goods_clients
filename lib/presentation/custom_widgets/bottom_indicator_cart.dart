@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:goods_clients/business_logic/cubits/available/available_cubit.dart';
-import 'package:goods_clients/business_logic/cubits/available/available_state.dart';
 import 'package:goods_clients/business_logic/cubits/cart/cart_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/cart/cart_state.dart';
 import 'package:goods_clients/business_logic/cubits/get_supplier_data/get_supplier_data_cubit.dart';
@@ -23,13 +21,13 @@ class _BottomIndicatorCartState extends State<BottomIndicatorCart> {
         if (state is GetSupplierDataSuccess) {
           int minOrderPrice = state.suppliers[0]['minOrderPrice'];
           int minOrderProducts = state.suppliers[0]['minOrderProducts'];
-          return BlocBuilder<AvailableCubit, AvailableState>(
+          return BlocBuilder<CartCubit, CartState>(
             builder: (context, state) {
-              if (state is AvailableLoaded) {
-                int summation = state.totalWithOffer;
+              if (state is CartUpdated) {
+                int totalWithOffer = state.totalWithOffer;
 
                 double indicatorValue =
-                    minOrderPrice > 0 ? (summation) / minOrderPrice : 0.0;
+                    minOrderPrice > 0 ? (totalWithOffer) / minOrderPrice : 0.0;
 
                 Color indicatorColor = indicatorValue >= 1
                     ? const Color.fromARGB(255, 255, 213, 87)
@@ -52,7 +50,7 @@ class _BottomIndicatorCartState extends State<BottomIndicatorCart> {
                           builder: (context, state) {
                             if (state is CartUpdated) {
                               return Text(
-                                minOrderPrice <= summation &&
+                                minOrderPrice <= totalWithOffer &&
                                         state.cartItems.length !=
                                             minOrderProducts
                                     ? 'ضيف ${minOrderProducts - state.cartItems.length} أصناف تاني'

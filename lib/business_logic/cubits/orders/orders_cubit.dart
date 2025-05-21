@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:goods_clients/business_logic/cubits/orders/orders_state.dart';
 import 'package:goods_clients/data/models/order_model.dart';
 
@@ -24,8 +25,17 @@ class OrdersCubit extends Cubit<OrdersState> {
     newOrders = [];
     previousOrders = [];
     try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserId == null) {
+        emit(OrdersError());
+        return [];
+      }
+
       final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance.collection('orders').get();
+          await FirebaseFirestore.instance
+              .collection('orders')
+              .where('clientId', isEqualTo: currentUserId)
+              .get();
 
       final List<Map<String, dynamic>> orders =
           querySnapshot.docs.map((doc) => doc.data()..['id'] = doc.id).toList();

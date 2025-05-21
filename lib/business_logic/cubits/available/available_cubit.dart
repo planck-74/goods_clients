@@ -160,7 +160,7 @@ class AvailableCubit extends Cubit<AvailableState> {
 
       // هنا: احتفظ بالـ controllers القديمة أو أنشئ جديدة إذا لم تكن موجودة
       for (var doc in snap.docs) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         final key = 'product_${data['productId']}';
 
         controllers.putIfAbsent(key, () => TextEditingController());

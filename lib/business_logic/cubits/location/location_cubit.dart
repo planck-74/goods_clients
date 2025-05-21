@@ -38,8 +38,8 @@ class LocationCubit extends Cubit<LocationState> {
     emit(state.copyWith(cities: data, selectedGovernorate: governorate));
   }
 
-  Future<void> fetchNeighborhoods(String governorate, String city) async {
-    print('Fetching neighborhoods for $governorate > $city');
+  Future<void> fetchAreas(String governorate, String city) async {
+    print('Fetching areas for $governorate > $city');
     final snapshot = await firestore
         .collection('admin_data')
         .doc('locations')
@@ -47,15 +47,15 @@ class LocationCubit extends Cubit<LocationState> {
         .doc(governorate)
         .collection('cities')
         .doc(city)
-        .collection('neighborhoods')
+        .collection('areas')
         .get();
-    final data = snapshot.docs.map((doc) => doc['name'] as String).toList();
-    print('Fetched neighborhoods for $governorate > $city: $data');
-    emit(state.copyWith(neighborhoods: data, selectedCity: city));
+    final data = snapshot.docs.map((doc) => doc.id).toList();
+    print('Fetched areas for $governorate > $city: $data');
+    emit(state.copyWith(areas: data, selectedCity: city));
   }
 
-  void selectNeighborhood(String neighborhood) {
-    print('Neighborhood selected: $neighborhood');
-    emit(state.copyWith(selectedNeighborhood: neighborhood));
+  void selectArea(String area) {
+    print('Area selected: $area');
+    emit(state.copyWith(selectedArea: area));
   }
 }

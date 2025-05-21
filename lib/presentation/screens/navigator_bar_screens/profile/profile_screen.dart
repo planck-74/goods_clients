@@ -9,7 +9,6 @@ import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/open_social_media.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/profile/show_call_dialog.dart';
 import 'package:goods_clients/services/auth_service.dart';
-
 import 'dynamic_image_container.dart';
 
 class Profile extends StatefulWidget {
@@ -413,8 +412,8 @@ void _showSignOutConfirmation(BuildContext context) {
         ),
         TextButton(
           onPressed: () {
-            Navigator.pop(context);
             AuthService.logout(context);
+            Navigator.pop(context);
           },
           child: const Text(
             'نعم',

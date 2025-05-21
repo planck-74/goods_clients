@@ -1,35 +1,35 @@
 class LocationState {
   final List<String> governorates;
   final List<String> cities;
-  final List<String> neighborhoods;
+  final List<String> areas;
   final String? selectedGovernorate;
   final String? selectedCity;
-  final String? selectedNeighborhood;
+  final String? selectedArea;
 
   LocationState({
     this.governorates = const [],
     this.cities = const [],
-    this.neighborhoods = const [],
+    this.areas = const [],
     this.selectedGovernorate,
     this.selectedCity,
-    this.selectedNeighborhood,
+    this.selectedArea,
   });
 
   LocationState copyWith({
     List<String>? governorates,
     List<String>? cities,
-    List<String>? neighborhoods,
+    List<String>? areas,
     String? selectedGovernorate,
     String? selectedCity,
-    String? selectedNeighborhood,
+    String? selectedArea,
   }) {
     return LocationState(
       governorates: governorates ?? this.governorates,
       cities: cities ?? this.cities,
-      neighborhoods: neighborhoods ?? this.neighborhoods,
+      areas: areas ?? this.areas,
       selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
       selectedCity: selectedCity ?? this.selectedCity,
-      selectedNeighborhood: selectedNeighborhood ?? this.selectedNeighborhood,
+      selectedArea: selectedArea ?? this.selectedArea,
     );
   }
 }

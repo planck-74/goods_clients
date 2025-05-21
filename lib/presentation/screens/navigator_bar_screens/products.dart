@@ -25,7 +25,6 @@ class _ProductsState extends State<Products> {
 
   @override
   void initState() {
-    // fbm.getToken().then((token) {});
     _loadData();
     super.initState();
   }
@@ -49,7 +48,6 @@ class _ProductsState extends State<Products> {
       _isRefreshing = true;
     });
 
-    // إعادة تحميل البيانات بقوة حتى لو كانت محملة مسبقاً
     await context.read<AvailableCubit>().fetchProducts(forceRefresh: true);
     await context.read<AvailableCubit>().fetchOnSaleProducts();
 

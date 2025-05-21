@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods_clients/business_logic/cubits/available/available_cubit.dart';
-import 'package:goods_clients/business_logic/cubits/available/available_state.dart';
 import 'package:goods_clients/business_logic/cubits/cart/cart_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/cart/cart_state.dart';
 import 'package:goods_clients/business_logic/cubits/get_supplier_data/get_supplier_data_cubit.dart';
@@ -56,12 +55,11 @@ class CartBottomButton extends StatelessWidget {
                     final minOrderProducts = supplier?['minOrderProducts'] ?? 0;
                     final minOrderPrice = supplier?['minOrderPrice'] ?? 0;
 
-                    return BlocBuilder<AvailableCubit, AvailableState>(
+                    return BlocBuilder<CartCubit, CartState>(
                       builder: (context, state) {
-                        if (state is AvailableLoaded) {
-                          final totalWithOffer =
-                              context.read<AvailableCubit>().totalWithOffer;
-                          final total = context.read<AvailableCubit>().total;
+                        if (state is CartUpdated) {
+                          final totalWithOffer = state.totalWithOffer;
+                          final total = state.total;
                           return (totalWithOffer >= minOrderPrice) &&
                                   (cartItemsCount >= minOrderProducts)
                               ? biggerRectangleElevatedButton(

@@ -8,7 +8,7 @@ const Color whiteColor = Colors.white;
 const Color scaffoldBackgroundColor = Color.fromARGB(255, 232, 232, 232);
 String storeId = 'cafb6e90-0ab1-11f0-b25a-8b76462b3bd5';
 // String clientId = FirebaseAuth.instance.currentUser!.uid;
-String supplierId = 'fhFR3ciR0qfz8cqvpVbv4Sy3Ka23';
+String supplierId = 'w3Px6Xg8mnUgqJXknJDG9zpbL4Q2';
 
 final GlobalKey<NavigatorBarState> navigatorBarKey =
     GlobalKey<NavigatorBarState>();
@@ -18,7 +18,6 @@ ThemeData getThemeData() {
       color: whiteColor,
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(color: whiteColor),
-    dialogBackgroundColor: darkBlueColor,
     scaffoldBackgroundColor: scaffoldBackgroundColor,
     textSelectionTheme: const TextSelectionThemeData(
         cursorColor: darkBlueColor, selectionHandleColor: darkBlueColor),
@@ -74,6 +73,7 @@ ThemeData getThemeData() {
         fontSize: 12,
       ),
     ),
+    dialogTheme: DialogThemeData(backgroundColor: darkBlueColor),
   );
 }
 

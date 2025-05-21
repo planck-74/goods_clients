@@ -12,7 +12,7 @@ class ControllerCubit extends Cubit<ControllerState> {
   final TextEditingController categoryController = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
   final TextEditingController secondPhoneNumber = TextEditingController();
-  final TextEditingController neighborhood = TextEditingController();
+  final TextEditingController area = TextEditingController();
 
   GeoPoint? geoPoint;
 
@@ -59,7 +59,7 @@ class ControllerCubit extends Cubit<ControllerState> {
     categoryController.dispose();
     phoneNumber.dispose();
     secondPhoneNumber.dispose();
-    neighborhood.dispose();
+    area.dispose();
     searchProduct.dispose();
   }
 
@@ -71,7 +71,7 @@ class ControllerCubit extends Cubit<ControllerState> {
     categoryController.clear();
     phoneNumber.clear();
     secondPhoneNumber.clear();
-    neighborhood.clear();
+    area.clear();
     searchProduct.clear();
     geoPoint = null;
     category = null;

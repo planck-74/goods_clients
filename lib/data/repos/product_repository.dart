@@ -86,7 +86,7 @@ class ProductRepository {
       // Firebase doesn't support native text search
       // Using startAt and endAt for prefix search
       String searchLower = query.toLowerCase();
-      String searchUpper = searchLower + '\uf8ff';
+      String searchUpper = '$searchLower\uf8ff';
 
       final QuerySnapshot snapshot = await _firestore
           .collection(_collectionPath)

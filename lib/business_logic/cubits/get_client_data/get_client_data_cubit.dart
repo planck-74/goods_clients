@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:goods_clients/business_logic/cubits/get_client_data/get_client_data_state.dart';
 
 class GetClientDataCubit extends Cubit<GetClientDataState> {
@@ -31,11 +32,13 @@ class GetClientDataCubit extends Cubit<GetClientDataState> {
           'imageUrl': clientData?['imageUrl'],
         };
 
+        debugPrint('clientData: $clientData');
+
         Future.delayed(const Duration(seconds: 3), () {
           emit(GetClientDataSuccess(client!));
         });
       } else {
-        emit(GetClientDataError('Client not found'));
+        emit(GetClientDataError('المستخدم غير موجود'));
       }
     } catch (e) {
       emit(GetClientDataError(e.toString()));

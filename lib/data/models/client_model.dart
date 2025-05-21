@@ -10,7 +10,7 @@ class ClientModel {
   final GeoPoint geoPoint;
   final String government;
   final String town;
-  final String? neighborhood; 
+  final String? area;
 
   ClientModel({
     required this.uid,
@@ -22,7 +22,7 @@ class ClientModel {
     required this.geoPoint,
     required this.government,
     required this.town,
-    this.neighborhood,
+    this.area,
   });
 
   factory ClientModel.fromMap(Map<String, dynamic> map) {
@@ -38,7 +38,7 @@ class ClientModel {
           : const GeoPoint(0, 0),
       government: map['government'] ?? '',
       town: map['town'] ?? '',
-      neighborhood: map['neighborhood'], 
+      area: map['area'],
     );
   }
 
@@ -61,7 +61,7 @@ class ClientModel {
       'geoLocation': geoPoint,
       'government': government,
       'town': town,
-      if (neighborhood != null) 'neighborhood': neighborhood, 
+      if (area != null) 'area': area,
     };
   }
 }
