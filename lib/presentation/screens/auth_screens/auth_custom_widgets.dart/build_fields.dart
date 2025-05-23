@@ -11,10 +11,12 @@ import 'package:goods_clients/business_logic/cubits/sign/sign_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/upload_client_data/upload_client_data_cubit.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/data/models/client_model.dart';
+import 'package:goods_clients/presentation/backgrounds/get_supplier_details_background.dart';
 import 'package:goods_clients/presentation/custom_widgets/build_location_picker.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_buttons/custom_buttons.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_textfield.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/auth_custom_widgets.dart/build_image_picker.dart';
+import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/get_client_location.dart';
 import 'package:goods_clients/services/auth_service.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,7 +28,6 @@ class BuildFields extends StatefulWidget {
 }
 
 class _BuildFieldsState extends State<BuildFields> {
-  XFile? pickedFile;
   final ImagePicker picker = ImagePicker();
   Future<void> pickImage() async {
     final XFile? file = await picker.pickImage(
@@ -38,7 +39,7 @@ class _BuildFieldsState extends State<BuildFields> {
 
     if (file != null) {
       setState(() {
-        pickedFile = file;
+        context.read<ControllerCubit>().pickedFile = file;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,8 +81,9 @@ class _BuildFieldsState extends State<BuildFields> {
                   screenHeight: MediaQuery.of(context).size.height,
                   context: context,
                   onTap: pickImage,
-                  pickedImage:
-                      pickedFile != null ? File(pickedFile!.path) : null,
+                  pickedImage: controllerCubit.pickedFile != null
+                      ? File(controllerCubit.pickedFile!.path)
+                      : null,
                 ),
                 Expanded(
                   child: customTextFormField(
@@ -153,9 +155,17 @@ class _BuildFieldsState extends State<BuildFields> {
                     ),
                   ),
                   DropdownMenuItem(
-                    value: 'محل البان',
+                    value: 'هايبر ماركت',
                     child: Text(
-                      'محل البان',
+                      'هايبر ماركت',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 'مطعم',
+                    child: Text(
+                      'مطعم',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
@@ -340,114 +350,95 @@ class _BuildFieldsState extends State<BuildFields> {
                 );
               },
             ),
-            buildLocationPicker(width: screenWidth),
-            const SizedBox(height: 12),
-            customOutlinedButton(
-              context: context,
-              backgroundColor: darkBlueColor,
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 100,
               width: screenWidth * 0.95,
-              height: 50,
-              child: BlocBuilder<SignCubit, SignState>(
-                builder: (context, state) {
-                  if (state is SignLoading) {
-                    return const CircularProgressIndicator();
-                  }
-                  return const Text(
-                    'حفظ البيانات',
-                    style: TextStyle(color: whiteColor),
-                  );
-                },
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueGrey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              onPressed: () async {
-                final cubit = context.read<ControllerCubit>();
-                final businessName = cubit.businessNameController.text.trim();
-                final category = cubit.category?.trim() ?? '';
-                final phoneNumber = cubit.phoneNumber.text.trim();
-                final secondPhoneNumber = cubit.secondPhoneNumber.text.trim();
-                final government = cubit.government?.trim() ?? '';
-                final town = cubit.town?.trim() ?? '';
+              child: TextField(
+                maxLines: 3,
+                textAlignVertical: TextAlignVertical.top,
+                controller: context.read<ControllerCubit>().addressTyped,
+                decoration: InputDecoration(
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  labelText: 'العنوان التفصيلي',
+                  labelStyle:
+                      const TextStyle(color: Colors.blueGrey, fontSize: 18),
+                  hintText:
+                      'مثال: شارع 15 - بجوار مسجد النور - عمارة 10 - الدور الاول',
+                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            customElevatedButtonRectangle(
+                onPressed: () {
+                  final cubit = context.read<ControllerCubit>();
+                  final businessName = cubit.businessNameController.text.trim();
+                  final category = cubit.category?.trim() ?? '';
+                  final phoneNumber = cubit.phoneNumber.text.trim();
+                  final government = cubit.government?.trim() ?? '';
+                  final town = cubit.town?.trim() ?? '';
+                  final addressTyped = cubit.addressTyped.text.trim();
 
-                final area = cubit.area.text.trim();
-                final geoPoint = cubit.geoPoint ?? const GeoPoint(0, 0);
-
-                if (businessName.isEmpty ||
-                    category.isEmpty ||
-                    phoneNumber.isEmpty ||
-                    government.isEmpty ||
-                    town.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('يرجى ملء جميع الحقول المطلوبة!'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-
-                if (pickedFile == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('يرجى اختيار صورة للمحل!'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-
-                try {
-                  context
-                      .read<UploadClientDataCubit>()
-                      .uploadClientData(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('جارٍ حفظ البيانات...'),
-                      backgroundColor: Colors.blue,
-                    ),
-                  );
-
-                  await context
-                      .read<SignCubit>()
-                      .uploadImage(
-                        context: context,
-                        imageFile: File(pickedFile!.path),
-                      )
-                      .then((imageUrl) async {
-                    await context.read<SignCubit>().saveClient(
-                        ClientModel(
-                          uid: FirebaseAuth.instance.currentUser!.uid,
-                          businessName: businessName,
-                          category: category,
-                          imageUrl: imageUrl,
-                          phoneNumber: phoneNumber,
-                          secondPhoneNumber: secondPhoneNumber,
-                          geoPoint: geoPoint,
-                          government: government,
-                          town: town,
-                          area: area,
-                        ),
-                        context);
-
+                  if (businessName.isEmpty ||
+                      category.isEmpty ||
+                      // phoneNumber.isEmpty ||
+                      government.isEmpty ||
+                      town.isEmpty ||
+                      addressTyped.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('تم حفظ البيانات بنجاح!'),
-                        backgroundColor: Colors.green,
+                        content: Text('يرجى ملء جميع الحقول المطلوبة!'),
+                        backgroundColor: Colors.red,
                       ),
                     );
-                    context.read<GetClientDataCubit>().getClientData();
-                    AuthService.saveLoginState(true);
-                    Navigator.pushNamed(context, '/NavigatorBar');
-                  });
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('حدث خطأ: $e'),
-                      backgroundColor: Colors.red,
-                    ),
+                    return;
+                  }
+
+                  if (context.read<ControllerCubit>().pickedFile == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('يرجى اختيار صورة للمحل!'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  Navigator.pushNamed(
+                    context,
+                    '/GetClientLocation',
                   );
-                }
-              },
-            ),
-            const SizedBox(height: 12),
+                },
+                color: primaryColor,
+                width: .25,
+                context: context,
+                child: const Text(
+                  'التالي',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ))
           ],
         ),
       ),
