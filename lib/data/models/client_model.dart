@@ -11,7 +11,7 @@ class ClientModel {
   final String government;
   final String town;
   final String? area;
-
+  final String? addressTyped;
   ClientModel({
     required this.uid,
     required this.businessName,
@@ -23,6 +23,7 @@ class ClientModel {
     required this.government,
     required this.town,
     this.area,
+    this.addressTyped,
   });
 
   factory ClientModel.fromMap(Map<String, dynamic> map) {
@@ -39,6 +40,7 @@ class ClientModel {
       government: map['government'] ?? '',
       town: map['town'] ?? '',
       area: map['area'],
+      addressTyped: map['addressTyped'],
     );
   }
 
@@ -62,6 +64,7 @@ class ClientModel {
       'government': government,
       'town': town,
       if (area != null) 'area': area,
+      if (addressTyped != null) 'addressTyped': addressTyped,
     };
   }
 }

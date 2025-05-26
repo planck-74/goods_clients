@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/auth_custom_widgets.dart/location_picker.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/get_client_details.dart';
+import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/get_client_location.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/otp_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/cart/cart_screen.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/main_market/main_market.dart';
@@ -20,4 +21,5 @@ final Map<String, WidgetBuilder> routes = {
   '/Cart': (context) => const Cart(),
   '/EditProfile': (context) => const EditProfile(),
   '/GetClientDetails': (context) => const GetClientDetails(),
+  '/GetClientLocation': (context) => const GetClientLocation(),
 };

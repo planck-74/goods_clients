@@ -73,7 +73,7 @@ ThemeData getThemeData() {
         fontSize: 12,
       ),
     ),
-    dialogTheme: DialogThemeData(backgroundColor: darkBlueColor),
+    dialogTheme: const DialogThemeData(backgroundColor: whiteColor),
   );
 }
 
