@@ -10,11 +10,7 @@ class PushNotificationService {
     // طلب الإذن من المستخدم
     NotificationSettings settings = await _messaging.requestPermission();
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('✅ تمت الموافقة على الإشعارات');
-    } else {
-      print('❌ تم رفض الإذن بالإشعارات');
-    }
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {}
 
     // تهيئة flutter_local_notifications
     const AndroidInitializationSettings androidSettings =

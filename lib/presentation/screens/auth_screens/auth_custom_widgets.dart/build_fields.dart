@@ -1,10 +1,7 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods_clients/business_logic/cubits/client_data/controller_cubit.dart';
-import 'package:goods_clients/business_logic/cubits/get_client_data/get_client_data_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/location/location_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/location/location_state.dart';
 import 'package:goods_clients/business_logic/cubits/sign/sign_cubit.dart';

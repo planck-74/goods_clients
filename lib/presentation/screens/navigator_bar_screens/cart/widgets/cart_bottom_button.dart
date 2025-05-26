@@ -14,6 +14,7 @@ import 'package:goods_clients/data/models/order_model.dart';
 import 'package:goods_clients/presentation/custom_widgets/bottom_indicator_cart.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_buttons/custom_buttons.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_progress_indicator.dart';
+import 'package:goods_clients/services/sound_effects.dart';
 
 class CartBottomButton extends StatelessWidget {
   const CartBottomButton({super.key});
@@ -110,8 +111,9 @@ class CartBottomButton extends StatelessWidget {
                                       ),
                                       orderCode,
                                     );
+                                    SoundEffects.playOrderConfirmed();
 
-                                    Future.delayed(const Duration(seconds: 3),
+                                    Future.delayed(const Duration(seconds: 0),
                                         () async {
                                       cartItems.clear();
                                       if (context.mounted) {
