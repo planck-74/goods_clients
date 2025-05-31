@@ -9,16 +9,16 @@ Future<void> openSocialMedia(BuildContext context, String platform) async {
     String url = '';
     switch (platform) {
       case 'facebook':
-        url = 'https:';
+        url = 'https://m.facebook.com/profile.php?id=61576716801219';
         break;
       case 'telegram':
-        url = 'https:';
+        url = 'https://t.me/goodsforexchange';
         break;
       case 'whatsapp':
-        url = 'https:';
+        url = 'https://whatsapp.com/channel/0029Vb00OyRB4hdRbGDGWS2p';
         break;
       case 'instagram':
-        url = 'https:';
+        url = 'https://www.instagram.com/goodsforexchange';
         break;
       default:
         return;

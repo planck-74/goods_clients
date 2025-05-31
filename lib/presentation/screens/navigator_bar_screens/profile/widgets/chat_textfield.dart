@@ -5,9 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:goods_clients/data/models/chat_message.dart';
 
 class EnhancedChatTextfield extends StatefulWidget {
@@ -215,13 +213,12 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
     setState(() => _isSending = true);
 
     try {
-      final senderId = FirebaseAuth.instance.currentUser?.uid;
+      final senderId = 'FirebaseAuth.instance.currentUser?.uid';
       if (senderId == null) return;
 
       final timestamp = FieldValue.serverTimestamp();
       final chatDocRef =
-          FirebaseFirestore.instance.collection('chats').doc(senderId);
-
+          FirebaseFirestore.instance.collection('chats').doc(widget.chatId);
       // إرسال النص إذا كان موجوداً
       if (_messageController.text.trim().isNotEmpty) {
         await _sendTextMessage(chatDocRef, senderId, timestamp);

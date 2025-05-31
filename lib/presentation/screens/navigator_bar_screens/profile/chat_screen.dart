@@ -192,7 +192,8 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
           ),
         ],
       );
-    }    return customAppBar(
+    }
+    return customAppBar(
       context,
       Row(
         children: [

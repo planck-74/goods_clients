@@ -8,25 +8,23 @@ void showCallDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        backgroundColor: Colors.white, // Light background color
+        backgroundColor: Colors.white,
         title: const Text(
           'إضغط لنسخ الرقم',
           style: TextStyle(
-            color: Color(0xFFB71C1C), // Dark Red color for title
+            color: Color(0xFFB71C1C),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Padding(
-          padding: const EdgeInsets.all(5.0), // More padding for space
+          padding: const EdgeInsets.all(5.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildPhoneNumberRow('01116475757', context),
-              const Divider(
-                  color: Colors.grey,
-                  thickness: 0.5), // Divider with light grey
-              _buildPhoneNumberRow('01022002286', context),
+              const Divider(color: Colors.grey, thickness: 0.5),
+              _buildPhoneNumberRow('01005650512', context),
             ],
           ),
         ),

@@ -157,7 +157,7 @@ class _ProductsState extends State<Products> {
                           child: ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               scrollDirection: Axis.horizontal,
-                              itemCount: 2,
+                              itemCount: 5,
                               itemBuilder: (context, index) {
                                 return const Skeletonizer(
                                     enableSwitchAnimation: true,
@@ -168,7 +168,7 @@ class _ProductsState extends State<Products> {
                 },
               ),
               mainMarketButton(context),
-              // مساحة إضافية في الأسفل لسهولة السحب
+
               const SizedBox(height: 20),
             ],
           ),

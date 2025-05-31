@@ -17,6 +17,18 @@ class ProductsCard extends StatelessWidget {
     return BlocBuilder<AvailableCubit, AvailableState>(
       builder: (context, state) {
         if (state is AvailableLoaded) {
+          if (products.isEmpty) {
+            return Center(
+              child: Text(
+                'لا توجد منتجات متاحة',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            );
+          }
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -34,122 +46,149 @@ class ProductsCard extends StatelessWidget {
                     final controller =
                         context.read<AvailableCubit>().controllers[productId] ??
                             TextEditingController(text: '10');
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                      child: Container(
-                        constraints: const BoxConstraints(minWidth: 200),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                        ),
-                        child: IntrinsicWidth(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 6, 0, 4),
-                                child: Text(
-                                  'الحساب الرسمي',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color.fromARGB(255, 14, 103, 151),
-                                  ),
-                                ),
+                    return products.length > 1
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                            child: Container(
+                              constraints: const BoxConstraints(minWidth: 200),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(6)),
                               ),
-                              SizedBox(
-                                width: 100,
-                                child: buildProductImage(
-                                  height: 100,
-                                  product: product,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '${product['name']}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 14,
-                                        ),
-                                        softWrap: true,
-                                      ),
-                                      if (product['size'] != null) ...[
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: Text(
-                                            '- ${product['size']}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 14,
-                                            ),
-                                            softWrap: true,
-                                          ),
-                                        ),
-                                      ],
-                                      if (product['note'] != null &&
-                                          product['note'] != '')
-                                        Text(
-                                          '(${product['note']})',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 14,
-                                          ),
-                                          softWrap: true,
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (product['isOnSale'] == false)
-                                Text(
-                                  '${product['price'].toString()} جـ',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              if (product['isOnSale'] == true)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              child: IntrinsicWidth(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      '${product['offerPrice'].toString()} جـ',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
-                                        fontSize: 18,
+                                    const Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 6, 0, 4),
+                                      child: Text(
+                                        'الحساب الرسمي',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color:
+                                              Color.fromARGB(255, 14, 103, 151),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      '${product['price'].toString()} جـ',
-                                      style: const TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blueGrey,
-                                        fontSize: 14,
+                                    SizedBox(
+                                      width: 100,
+                                      child: buildProductImage(
+                                        height: 100,
+                                        product: product,
                                       ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${product['name']}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 14,
+                                              ),
+                                              softWrap: true,
+                                            ),
+                                            if (product['size'] != null) ...[
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                child: Text(
+                                                  '- ${product['size']}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 14,
+                                                  ),
+                                                  softWrap: true,
+                                                ),
+                                              ),
+                                            ],
+                                            if (product['note'] != null &&
+                                                product['note'] != '')
+                                              Text(
+                                                '(${product['note']})',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 14,
+                                                ),
+                                                softWrap: true,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    if (product['isOnSale'] == false)
+                                      Text(
+                                        '${product['price'].toString()} جـ',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    if (product['isOnSale'] == true)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '${product['offerPrice'].toString()} جـ',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            '${product['price'].toString()} جـ',
+                                            style: const TextStyle(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blueGrey,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    const SizedBox(height: 6),
+                                    AddToCartButton(
+                                      product: product,
+                                      controller: controller,
                                     ),
                                   ],
                                 ),
-                              const SizedBox(height: 6),
-                              AddToCartButton(
-                                product: product,
-                                controller: controller,
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: 240,
+                                    child: Text(
+                                      'لا توجد منتجات متاحة',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
-                          ),
-                        ),
-                      ),
-                    );
+                          );
                   },
                 ),
               ),
