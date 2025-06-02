@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:goods_clients/presentation/screens/navigator_bar_screens/navigator_bar_screen.dart';
 
@@ -7,7 +8,7 @@ const Color lightBackgroundColor = Colors.white;
 const Color whiteColor = Colors.white;
 const Color scaffoldBackgroundColor = Color.fromARGB(255, 232, 232, 232);
 String storeId = 'cafb6e90-0ab1-11f0-b25a-8b76462b3bd5';
-// String clientId = FirebaseAuth.instance.currentUser!.uid;
+String clientId = FirebaseAuth.instance.currentUser!.uid;
 String supplierId = 'w3Px6Xg8mnUgqJXknJDG9zpbL4Q2';
 
 final GlobalKey<NavigatorBarState> navigatorBarKey =

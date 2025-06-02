@@ -213,7 +213,7 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
     setState(() => _isSending = true);
 
     try {
-      final senderId = 'FirebaseAuth.instance.currentUser?.uid';
+      final senderId = FirebaseAuth.instance.currentUser?.uid;
       if (senderId == null) return;
 
       final timestamp = FieldValue.serverTimestamp();

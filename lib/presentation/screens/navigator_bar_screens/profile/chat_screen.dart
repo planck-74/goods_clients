@@ -32,6 +32,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
   bool _isSearchMode = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  bool _isLoadingMoreMessages = false;
 
   @override
   void initState() {
@@ -42,8 +43,8 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
 
   void _setupScrollListener() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 50) {
+      if (_scrollController.position.pixels <= 0 && !_isLoadingMoreMessages) {
+        // تحميل المزيد من الرسائل عند الوصول لأعلى القائمة
         _loadMoreMessages();
       }
     });
@@ -61,10 +62,27 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
   }
 
   Future<void> _loadMoreMessages() async {
-    setState(() {
-      _limit += 20;
-    });
-    await Future.delayed(const Duration(milliseconds: 300));
+    if (_isLoadingMoreMessages) return;
+    _isLoadingMoreMessages = true;
+
+    try {
+      if (_scrollController.hasClients) {
+        final beforeLoadPosition = _scrollController.position.pixels;
+        setState(() {
+          _limit += 20;
+        });
+
+        // انتظر لتحديث القائمة
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        if (_scrollController.hasClients) {
+          // الحفاظ على نفس موضع التمرير
+          _scrollController.jumpTo(beforeLoadPosition);
+        }
+      }
+    } finally {
+      _isLoadingMoreMessages = false;
+    }
   }
 
   void _toggleMessageSelection(String messageId) {
@@ -396,10 +414,31 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
               false;
         }).toList();
 
+        // Mark messages as read if they are not sent by the current user and not already read
+        Future.microtask(() async {
+          final batch = FirebaseFirestore.instance.batch();
+          final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+          for (final message in messages) {
+            if (message.senderId != currentUserId &&
+                message.status != MessageStatus.read) {
+              final docRef = FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc(currentUserId)
+                  .collection('messages')
+                  .doc(message.id);
+              batch.update(docRef, {'status': 'read'});
+            }
+          }
+          await batch.commit();
+        });
+
         return FadeTransition(
           opacity: _fadeAnimation,
           child: ListView.builder(
             controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: ClampingScrollPhysics(),
+            ),
             reverse: true,
             padding: const EdgeInsets.only(bottom: 8, top: 10),
             itemCount: messages.length,
