@@ -1,137 +1,95 @@
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { onDocumentCreated } = require('firebase-functions/v2/firestore');
+const { initializeApp, getApps } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+const { getMessaging } = require('firebase-admin/messaging');
 
-const STORE_ID = 'cafb6e90-0ab1-11f0-b25a-8b76462b3bd5';
-
-exports.scheduledFunction = functions.pubsub
-      .schedule('every 24 hours')
-      .timeZone('Africa/Cairo')
-      .onRun(async () => {
-            try {
-                  await updateTrendingProductsFromStore();
-                  await updateOnSaleProductsFromStore();
-                  console.log("Trending & On‑Sale products updated successfully.");
-            } catch (error) {
-                  console.error("Error in scheduledFunction:", error);
-            }
-      });
-
-/**
- * 1) جلب كل منتجات المتجر، ترتيبها حسب salesCount،
- *    أخذ أول 30، ثم تحديثها في الكولكشن trending_products.
- */
-async function updateTrendingProductsFromStore() {
-      const db = admin.firestore();
-      const trendingColl = db.collection('trending_products');
-
-      // جلب كل منتجات المتجر
-      const storeSnap = await db
-            .collection('stores').doc(STORE_ID)
-            .collection('products')
-            .get();
-
-      const batch = db.batch();
-
-      // ترتيب حسب salesCount وأخذ أول 30
-      const productsToUpdate = storeSnap.docs
-            .sort((a, b) => b.data().salesCount - a.data().salesCount)
-            .slice(0, 30);
-
-      // حذف أي مستندات قديمة تتجاوز الـ 30
-      const currentDocs = await trendingColl.get();
-      if (currentDocs.size > 30) {
-            currentDocs.docs.slice(30).forEach(doc => {
-                  batch.delete(doc.ref);
-            });
-      }
-
-      // تحديث أو إضافة المنتجات الجديدة
-      for (const storeDoc of productsToUpdate) {
-            const storeData = storeDoc.data();
-            const productId = storeData.productId;
-
-            // جلب البيانات الثابتة من الكولكشن العام
-            const globalSnap = await db
-                  .collection('products')
-                  .where('productId', '==', productId)
-                  .limit(1)
-                  .get();
-            const globalData = globalSnap.empty ? {} : globalSnap.docs[0].data();
-
-            // دمج البيانات الثابتة والديناميكية في خريطة واحدة
-            const combinedData = {
-                  ...globalData,      // اسم، وصف، تصنيف، صورة...
-                  ...storeData,       // سعر، توفر، خصم، salesCount...
-                  storeId: STORE_ID,
-                  updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            };
-
-            batch.set(trendingColl.doc(productId), combinedData, { merge: true });
-      }
-
-      await batch.commit();
-      console.log(`تم تحديث ${productsToUpdate.length} منتج تريند.`);
+// تأكد من تهيئة Firebase Admin
+if (getApps().length === 0) {
+      initializeApp();
 }
 
-/**
- * 2) جلب أول 30 منتج عليه عرض من متجر التاجر،
- *    ثم تحديثها في الكولكشن on_sale_products.
- */
-async function updateOnSaleProductsFromStore() {
-      const db = admin.firestore();
-      const onSaleColl = db.collection('on_sale_products');
-      const storeRef = db.collection('stores').doc(STORE_ID).collection('products');
-
-      // جلب أول 30 منتج عليه عرض
-      const saleSnap = await storeRef
-            .where('isOnSale', '==', true)
-            .limit(30)
-            .get();
-
-      if (saleSnap.empty) {
-            console.log(`No on‑sale products found in store ${STORE_ID}.`);
-            return;
-      }
-
-      const batch = db.batch();
-
-      // حذف أي مستندات قديمة تتجاوز الـ 30
-      const currentDocs = await onSaleColl.get();
-      if (currentDocs.size > 30) {
-            currentDocs.docs.slice(30).forEach(doc => {
-                  batch.delete(doc.ref);
-            });
-      }
-
-      // تحديث أو إضافة المنتجات الجديدة
-      for (const storeDoc of saleSnap.docs) {
-            const storeData = storeDoc.data();
-            const productId = storeData.productId;
-
-            // جلب البيانات الثابتة من الكولكشن العام
-            const globalSnap = await db
-                  .collection('products')
-                  .where('productId', '==', productId)
-                  .limit(1)
-                  .get();
-            if (globalSnap.empty) {
-                  console.warn(`Global product not found for productId ${productId}`);
-                  continue;
+exports.sendMessageNotification = onDocumentCreated({
+      document: 'chats/{chatId}/messages/{messageId}',
+      region: 'europe-west1', // نفس منطقة المشروع
+}, async (event) => {
+      try {
+            // تجاهل الإشعار إذا كانت الرسالة مكررة
+            const messageData = event.data.data();
+            if (messageData.notificationSent) {
+                  console.log('Notification already sent for this message');
+                  return null;
             }
-            const globalData = globalSnap.docs[0].data();
+            const { chatId, messageId } = event.params;
+            const recipientId = messageData.recipientId;
 
-            // دمج البيانات الثابتة والديناميكية في خريطة واحدة
-            const combinedData = {
-                  ...globalData,
-                  ...storeData,
-                  storeId: STORE_ID,
-                  updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            // تجاهل إذا لم يكن هناك مستلم
+            if (!recipientId) {
+                  console.log('No recipient ID found');
+                  return null;
+            }
+
+            // الحصول على رمز FCM للمستلم
+            const db = getFirestore();
+            const recipientDoc = await db
+                  .collection('clients')
+                  .doc(recipientId)
+                  .get();
+
+            if (!recipientDoc.exists) {
+                  console.log('Recipient document not found');
+                  return null;
+            }
+
+            const fcmToken = recipientDoc.data()?.fcmToken;
+
+            if (!fcmToken) {
+                  console.log('No FCM token found for recipient');
+                  return null;
+            }
+
+            // تحضير الإشعار
+            const notificationPayload = {
+                  notification: {
+                        title: messageData.senderName || 'رسالة جديدة',
+                        body: messageData.text || 'تم استلام رسالة جديدة',
+                  },
+                  data: {
+                        chatId: chatId,
+                        messageId: messageId,
+                        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+                  },
+                  android: {
+                        priority: 'high',
+                        notification: {
+                              channelId: 'high_importance_channel',
+                              priority: 'high',
+                              defaultSound: true,
+                              defaultVibrateTimings: true,
+                        }
+                  },
+                  apns: {
+                        payload: {
+                              aps: {
+                                    sound: 'default',
+                              }
+                        }
+                  },
+                  token: fcmToken
             };
 
-            batch.set(onSaleColl.doc(productId), combinedData, { merge: true });
-      }
+            // إرسال الإشعار
+            const messaging = getMessaging();
+            await messaging.send(notificationPayload);
 
-      await batch.commit();
-      console.log(`تم تحديث ${saleSnap.docs.length} منتج بعرض من متجر ${STORE_ID}.`);
-}
+            // تحديث الرسالة لتجنب إرسال إشعار مكرر
+            await event.data.ref.update({
+                  notificationSent: true
+            });
+
+            console.log('Notification sent successfully');
+            return null;
+      } catch (error) {
+            console.error('Error sending notification:', error);
+            return null;
+      }
+});

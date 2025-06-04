@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:goods_clients/data/global/theme/theme_data.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,14 +13,12 @@ class EnhancedChatTextfield extends StatefulWidget {
   final String chatId;
   final ChatMessage? replyToMessage;
   final VoidCallback? onClearReply;
-  final String? supplierId; // إضافة معرف المورد
 
   const EnhancedChatTextfield({
     super.key,
     required this.chatId,
     this.replyToMessage,
     this.onClearReply,
-    this.supplierId,
   });
 
   @override
@@ -32,7 +31,7 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
   final ImagePicker _picker = ImagePicker();
   final FocusNode _focusNode = FocusNode();
   // حالة الملفات والوسائط
-  List<AttachmentFile> _attachments = [];
+  final List<AttachmentFile> _attachments = [];
   bool _isSending = false;
 
   // الرسوم المتحركة
@@ -243,15 +242,16 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
     final messageData = {
       'sender': senderId,
       'text': _messageController.text.trim(),
-      'timestamp': timestamp,
       'type': 'text',
+      'timestamp': timestamp,
       'status': 'sent',
       if (widget.replyToMessage != null) 'replyToId': widget.replyToMessage!.id,
+      'isEdited': false,
+      'recipientId': supplierId,
     };
 
     await chatDocRef.collection('messages').add(messageData);
 
-    // تحديث آخر رسالة في المحادثة
     await _updateLastMessage(
         chatDocRef, _messageController.text.trim(), timestamp);
   }
@@ -271,10 +271,8 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
     });
 
     try {
-      // رفع الملف
       final downloadUrl = await _uploadFile(attachment, senderId);
 
-      // تحديث الرسالة بالرابط النهائي
       await tempMessageRef.update({
         'file': downloadUrl,
         'uploading': false,
@@ -343,7 +341,7 @@ class _EnhancedChatTextfieldState extends State<EnhancedChatTextfield>
       FieldValue timestamp) async {
     await chatDocRef.set({
       'clientId': FirebaseAuth.instance.currentUser?.uid,
-      'supplierId': widget.supplierId,
+      'supplierId': supplierId,
       'lastMessage': message,
       'lastMessageTime': timestamp,
       'updatedAt': timestamp,

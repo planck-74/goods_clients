@@ -16,8 +16,6 @@ class ProductRepository {
     String classification = 'كل',
     String? searchQuery,
   }) async {
-    debugPrint(
-        'fetchProducts: classification=$classification, searchQuery=$searchQuery');
     allProducts = [];
 
     Query query = FirebaseFirestore.instance
@@ -39,7 +37,6 @@ class ProductRepository {
     }
 
     final snap = await query.get();
-    debugPrint('fetchProducts: fetched count=${snap.docs.length}');
     allProducts = snap.docs
         .map((doc) {
           final data = doc.data();
@@ -69,7 +66,6 @@ class ProductRepository {
     // تهيئة التحكم للمنتجات
     _initControllersForProducts(allProducts);
 
-    debugPrint('fetchProducts: allProducts.length=${allProducts.length}');
     return allProducts;
   }
 

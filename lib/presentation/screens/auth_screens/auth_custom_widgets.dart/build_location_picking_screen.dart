@@ -13,7 +13,6 @@ import 'package:goods_clients/data/models/client_model.dart';
 import 'package:goods_clients/presentation/custom_widgets/build_location_picker.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_buttons/custom_buttons.dart';
 import 'package:goods_clients/services/auth_service.dart';
-import 'package:image_picker/image_picker.dart';
 
 class BuildLocationPickingScreen extends StatefulWidget {
   const BuildLocationPickingScreen({super.key});

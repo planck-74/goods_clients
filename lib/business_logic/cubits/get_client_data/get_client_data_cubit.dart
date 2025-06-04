@@ -32,8 +32,6 @@ class GetClientDataCubit extends Cubit<GetClientDataState> {
           'imageUrl': clientData?['imageUrl'],
         };
 
-        debugPrint('clientData: $clientData');
-
         Future.delayed(const Duration(seconds: 3), () {
           emit(GetClientDataSuccess(client!));
         });

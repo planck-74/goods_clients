@@ -4,17 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goods_clients/business_logic/cubits/client_data/controller_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/location/location_cubit.dart';
 import 'package:goods_clients/business_logic/cubits/location/location_state.dart';
-import 'package:goods_clients/business_logic/cubits/sign/sign_cubit.dart';
-import 'package:goods_clients/business_logic/cubits/upload_client_data/upload_client_data_cubit.dart';
 import 'package:goods_clients/data/global/theme/theme_data.dart';
-import 'package:goods_clients/data/models/client_model.dart';
-import 'package:goods_clients/presentation/backgrounds/get_supplier_details_background.dart';
-import 'package:goods_clients/presentation/custom_widgets/build_location_picker.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_buttons/custom_buttons.dart';
 import 'package:goods_clients/presentation/custom_widgets/custom_textfield.dart';
 import 'package:goods_clients/presentation/screens/auth_screens/auth_custom_widgets.dart/build_image_picker.dart';
-import 'package:goods_clients/presentation/screens/auth_screens/sign_pages/get_client_location.dart';
-import 'package:goods_clients/services/auth_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class BuildFields extends StatefulWidget {
@@ -347,7 +340,7 @@ class _BuildFieldsState extends State<BuildFields> {
                 );
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Container(
@@ -386,7 +379,7 @@ class _BuildFieldsState extends State<BuildFields> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             customElevatedButtonRectangle(

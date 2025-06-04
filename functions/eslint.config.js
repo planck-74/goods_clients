@@ -1,6 +1,5 @@
 /** @type {import("eslint").ESLint.ConfigData} */
-export default {
-      root: true,
+module.exports = {
       env: {
             node: true,
             es2021: true,
@@ -10,8 +9,12 @@ export default {
       ],
       parserOptions: {
             ecmaVersion: "latest",
+            sourceType: "commonjs"
       },
       rules: {
-            // هنا تضيف قواعدك أو تعديلاتك الخاصة
+            "no-unused-vars": "warn",
+            "no-console": "off",
+            "indent": ["error", 6],
+            "quotes": ["error", "double"]
       },
 };
